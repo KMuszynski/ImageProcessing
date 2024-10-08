@@ -7,8 +7,14 @@ import sys
 #############
 
 def doBrightness(param, arr):
+    if int(param) <= 0:
+        print("error devide by zero")
+        exit()
+    if int(param) > 100:
+        print("error brightness cant exceed 100")
+        exit()
     print("Function doBrightness invoked with param: " + param)
-    arr = arr / 2  # Adjust brightness; this is a simple example
+    arr = arr * (int(param)/100)  # Adjust brightness; this is a simple example
     return arr
 
 def doContrast(param, arr):
