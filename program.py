@@ -6,6 +6,35 @@ import sys
 # FUNCTIONS #
 #############
 
+def print_help():
+    help_text = """
+Usage: python3 program.py [command] [options]
+
+Commands:
+    --brightness <value>       Apply brightness adjustment (value: -100 to 100)
+    --contrast <value>         Apply contrast adjustment (value: -100 to 100)
+    --negative                  Apply negative effect to the image
+    --hflip                     Apply horizontal flip
+    --vflip                     Apply vertical flip
+    --dflip                     Apply diagonal flip
+    --shrink <factor>          Shrink the image by the specified factor
+    --enlarge <factor>         Enlarge the image by the specified factor
+    --median <size>            Apply median filter with the specified size
+    --gmean <size>             Apply geometric mean filter with the specified size
+    --mse <value>              Calculate mean square error against the original image
+    --pmse <value>             Calculate peak mean square error against the original image
+    --snr <value>              Calculate signal to noise ratio against the original image
+    --psnr <value>             Calculate peak signal to noise ratio against the original image
+    --md <value>               Calculate maximum difference against the original image
+    --help                     Show this help message
+
+Examples:
+    python3 program.py --brightness 50
+    python3 program.py --contrast -20
+    python3 program.py --negative
+    """
+    print(help_text)
+
 def doBrightness(param, arr):
     if int(param) <= 0:
         print("error devide by zero")
@@ -97,7 +126,7 @@ def doMaximumDifference(param, arr):
 #######################
 # handling parameters #
 #######################
-noParamFunctions = ["--negative"]
+noParamFunctions = ["--negative", "--help"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -140,7 +169,9 @@ else:
     arr = arr.reshape(im.size[1], im.size[0], numColorChannels)
 
 # Apply the command
-if command == '--brightness':
+if command == '--help':
+    print_help()
+elif command == '--brightness':
     arr = doBrightness(param, arr)
 elif command == '--contrast':
     arr = doContrast(param, arr)
