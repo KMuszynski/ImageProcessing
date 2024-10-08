@@ -31,9 +31,9 @@ def doContrast(param, arr):
     print("Function doContrast invoked with param: " + param)
     return new_arr.astype(np.uint8)
 
-def doNegative(param, arr):
-    print("This is TO BE IMPLEMENTED...")  # Placeholder for future implementation
-    return arr  # Ensure it returns arr, even if no changes are made
+def doNegative(arr):
+    arr = 255 - arr
+    return arr  
 
 def doHorizontallFlip(param, arr):
     print("This is TO BE IMPLEMENTED...")  # Placeholder for future implementation
@@ -97,17 +97,31 @@ def doMaximumDifference(param, arr):
 #######################
 # handling parameters #
 #######################
+noParamFunctions = ["--negative"]
 
+# Check if no command line parameters were given
 if len(sys.argv) == 1:
     print("No command line parameters given.\n")
     sys.exit()
 
+# Store the command from the command line
+command = sys.argv[1]
+
+# Check if there are only two arguments (command and one parameter)
 if len(sys.argv) == 2:
-    print("Too few command line parameters given.\n")
+    if command not in noParamFunctions:
+        print("Too few command line parameters given.\n")
+        sys.exit()
+
+# Check if there are more than two arguments
+if len(sys.argv) > 3:
+    print("Too many command line parameters given.\n")
     sys.exit()
 
-command = sys.argv[1]
-param = sys.argv[2]
+# Store the parameter if present
+if len(sys.argv) == 3:
+    param = sys.argv[2]
+
 
 #############################
 # handle image and commands #
@@ -131,7 +145,7 @@ if command == '--brightness':
 elif command == '--contrast':
     arr = doContrast(param, arr)
 elif command == '--negative':
-    arr = doNegative(param, arr)
+    arr = doNegative(arr)
 elif command == '--hflip':
     arr = doHorizontalFlip(param, arr)
 elif command == '--vflip':
