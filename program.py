@@ -14,13 +14,22 @@ def doBrightness(param, arr):
         print("error brightness cant exceed 100")
         exit()
     print("Function doBrightness invoked with param: " + param)
-    arr = arr * (int(param)/100)  # Adjust brightness; this is a simple example
+    arr = arr * (int(param)/100)
     return arr
 
 def doContrast(param, arr):
+    contrast_factor = float(param) / 100
+    pivot = 128  # Midpoint for 8-bit images
+
+    # Calculate the new pixel values
+    new_arr = pivot + contrast_factor * (arr - pivot)
+
+    # Manually clamp values to ensure they stay within the valid range [0, 255]
+    new_arr[new_arr < 0] = 0
+    new_arr[new_arr > 255] = 255
+
     print("Function doContrast invoked with param: " + param)
-    print("This is TO BE IMPLEMENTED...")  # Placeholder for future implementation
-    return arr  # Ensure it returns arr, even if no changes are made
+    return new_arr.astype(np.uint8)
 
 def doNegative(param, arr):
     print("This is TO BE IMPLEMENTED...")  # Placeholder for future implementation
@@ -120,7 +129,33 @@ else:
 if command == '--brightness':
     arr = doBrightness(param, arr)
 elif command == '--contrast':
-    arr = doContrast(param, arr)  # Call doContrast and get the updated arr
+    arr = doContrast(param, arr)
+elif command == '--negative':
+    arr = doNegative(param, arr)
+elif command == '--hflip':
+    arr = doHorizontalFlip(param, arr)
+elif command == '--vflip':
+    arr = doVerticalFlip(param, arr)
+elif command == '--dflip':
+    arr = doDiagonalFlip(param, arr)
+elif command == '--shrink':
+    arr = doShrink(param, arr)
+elif command == '--enlarge':
+    arr = doEnlarge(param, arr)
+elif command == '--median':
+    arr = doMedianFilter(param, arr)
+elif command == '--gmean':
+    arr = doGeometricMeanFilter(param, arr)
+elif command == '--mse':
+    arr = doMeanSquareError(param, arr, original_arr)  # Assuming you have the original array
+elif command == '--pmse':
+    arr = doPeakMeanSquareError(param, arr, original_arr)  # Assuming you have the original array
+elif command == '--snr':
+    arr = doSignalToNoiseRatio(param, arr, original_arr)  # Assuming you have the original array
+elif command == '--psnr':
+    arr = doPeakSignalToNoiseRatio(param, arr, original_arr)  # Assuming you have the original array
+elif command == '--md':
+    arr = doMaximumDifference(param, arr, original_arr)  # Assuming you have the original array
 else:
     print("Unknown command: " + command)
     sys.exit()
