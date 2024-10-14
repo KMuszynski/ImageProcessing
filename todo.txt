@@ -1,0 +1,22 @@
+# Elementary Operations
+[x] doBrightness(param, arr) - Brightness modification
+[x] doContrast(param, arr) - Contrast modification
+[x] doNegative(arr) - Negative effect
+
+# Geometric Operations
+[x] doHorizontalFlip(arr) - Horizontal flip
+[ ] doVerticalFlip(param, arr) - Vertical flip (placeholder, needs implementation)
+[ ] doDiagonalFlip(param, arr) - Diagonal flip (placeholder, needs implementation)
+[ ] doShrink(param, arr) - Image shrinking (placeholder, needs implementation)
+[ ] doEnlarge(param, arr) - Image enlargement (placeholder, needs implementation)
+
+# Noise Removal Methods
+[ ] doMedianFilter(param, arr) - Median filter (placeholder, needs implementation)
+[ ] doGeometricMeanFilter(param, arr) - Geometric mean filter (placeholder, needs implementation)
+
+# Similarity Measures
+[ ] doMeanSquareError(param, arr) - Mean square error (placeholder, needs implementation)
+[ ] doPeakMeanSquareError(param, arr) - Peak mean square error (placeholder, needs implementation)
+[ ] doSignalToNoiseRatio(param, arr) - Signal to noise ratio (placeholder, needs implementation)
+[ ] doPeakSignalToNoiseRatio(param, arr) - Peak signal to noise ratio (placeholder, needs implementation)
+[ ] doMaximumDifference(param, arr) - Maximum difference (placeholder, needs implementation)
