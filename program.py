@@ -8,7 +8,9 @@ import sys
 from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter
-from components.functions.similarity import doMeanSquareError, doPeakMeanSquareError, doSignalToNoiseRatio, doPeakSignalToNoiseRatio, doMaximumDifference
+from components.functions.similarity import doMeanSquareError, doPeakMeanSquareError, doSignalToNoiseRatio, \
+    doPeakSignalToNoiseRatio, doMaximumDifference
+
 
 #############
 # FUNCTIONS #
@@ -43,10 +45,11 @@ Examples:
     """
     print(help_text)
 
+
 #######################
 # handling parameters #
 #######################
-noParamFunctions = ["--negative", "--help", "--hflip"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -91,7 +94,7 @@ elif command == '--negative':
 elif command == '--hflip':
     arr = doHorizontalFlip(arr)
 elif command == '--vflip':
-    arr = doVerticalFlip(param, arr)
+    arr = doVerticalFlip(arr)
 elif command == '--dflip':
     arr = doDiagonalFlip(param, arr)
 elif command == '--shrink':

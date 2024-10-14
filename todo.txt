@@ -4,8 +4,8 @@
 [x] doNegative(arr) - Negative effect
 
 # Geometric Operations
-[x] doHorizontalFlip(arr) - Horizontal flip
-[ ] doVerticalFlip(param, arr) - Vertical flip (placeholder, needs implementation)
+[x] doHorizontalFlip(arr) - Horizontal flip - corrected
+[x] doVerticalFlip(param, arr) - Vertical flip
 [ ] doDiagonalFlip(param, arr) - Diagonal flip (placeholder, needs implementation)
 [ ] doShrink(param, arr) - Image shrinking (placeholder, needs implementation)
 [ ] doEnlarge(param, arr) - Image enlargement (placeholder, needs implementation)
