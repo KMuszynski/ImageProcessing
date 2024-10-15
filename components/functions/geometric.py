@@ -29,18 +29,14 @@ def doVerticalFlip(arr):
 
     width = arr.shape[1]
     height = arr.shape[0]
-
-    print(f"Image dimensions: {width}x{height}")
-
     arr2 = arr[::-1]
-    print("Vertical flip applied successfully!")
     return arr2
 
 
-def doDiagonalFlip(param, arr):
-    print("Function doDiagonalFlip invoked with param: " + param)
-    # Placeholder for future implementation
-    return arr  # Ensure it returns arr, even if no changes are made
+def doDiagonalFlip(arr):
+    arr = doVerticalFlip(arr)
+    arr = doHorizontalFlip(arr)
+    return arr
 
 
 def doShrink(param, arr):

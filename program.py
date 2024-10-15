@@ -49,7 +49,7 @@ Examples:
 #######################
 # handling parameters #
 #######################
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -96,7 +96,7 @@ elif command == '--hflip':
 elif command == '--vflip':
     arr = doVerticalFlip(arr)
 elif command == '--dflip':
-    arr = doDiagonalFlip(param, arr)
+    arr = doDiagonalFlip(arr)
 elif command == '--shrink':
     arr = doShrink(param, arr)
 elif command == '--enlarge':
