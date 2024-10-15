@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 def doBrightness(param, arr):
     if int(param) <= 0:
         print("error divide by zero")
@@ -10,8 +11,9 @@ def doBrightness(param, arr):
         print("error brightness can't exceed 100")
         exit()
     print("Function doBrightness invoked with param: " + param)
-    arr = arr * (int(param)/100)
+    arr = arr * (int(param) / 100)
     return arr
+
 
 def doContrast(param, arr):
     contrast_factor = float(param) / 100
@@ -26,6 +28,7 @@ def doContrast(param, arr):
 
     print("Function doContrast invoked with param: " + param)
     return new_arr.astype(np.uint8)
+
 
 def doNegative(arr):
     arr = 255 - arr
