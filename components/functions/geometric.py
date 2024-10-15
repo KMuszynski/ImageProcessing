@@ -40,12 +40,73 @@ def doDiagonalFlip(arr):
 
 
 def doShrink(param, arr):
-    print("Function doShrink invoked with param: " + param)
-    # Placeholder for future implementation
-    return arr  # Ensure it returns arr, even if no changes are made
+    print("Function doShrink invoked with param: " + str(param))
+    param = int(param)
+    # Ensure input is a numpy array
+    arr = np.array(arr)
+
+    # Get original dimensions
+    height, width = arr.shape[:2]  # Assumes arr is either (H, W) for grayscale or (H, W, C) for color
+
+    print(f"Original size: {height} x {width}")
+
+    # Calculate new dimensions
+    resultHeight = int(height * (param / 100))
+    resultWidth = int(width * (param / 100))
+
+    print(f"New size: {resultHeight} x {resultWidth}")
+
+    # Create an empty array for the resized image (preserves channels if they exist)
+    if arr.ndim == 3:  # Color image (e.g., RGB)
+        newArr = np.zeros((resultHeight, resultWidth, arr.shape[2]), dtype=arr.dtype)
+    else:  # Grayscale image
+        newArr = np.zeros((resultHeight, resultWidth), dtype=arr.dtype)
+
+    # Perform nearest-neighbor interpolation
+    for i in range(resultHeight):
+        for j in range(resultWidth):
+            # Map to the nearest pixel in the original image
+            orig_i = int(i * (height / resultHeight))
+            orig_j = int(j * (width / resultWidth))
+
+            # Copy the pixel from the original array to the new array
+            newArr[i, j] = arr[orig_i, orig_j]
+
+    return newArr
+
 
 
 def doEnlarge(param, arr):
     print("Function doEnlarge invoked with param: " + param)
-    # Placeholder for future implementation
-    return arr  # Ensure it returns arr, even if no changes are made
+    
+    param = int(param)
+    # Ensure input is a numpy array
+    arr = np.array(arr)
+
+    # Get original dimensions
+    height, width = arr.shape[:2]  # Assumes arr is either (H, W) for grayscale or (H, W, C) for color
+
+    print(f"Original size: {height} x {width}")
+
+    # Calculate new dimensions
+    resultHeight = int(height * (param))
+    resultWidth = int(width * (param))
+
+    print(f"New size: {resultHeight} x {resultWidth}")
+
+    # Create an empty array for the resized image (preserves channels if they exist)
+    if arr.ndim == 3:  # Color image (e.g., RGB)
+        newArr = np.zeros((resultHeight, resultWidth, arr.shape[2]), dtype=arr.dtype)
+    else:  # Grayscale image
+        newArr = np.zeros((resultHeight, resultWidth), dtype=arr.dtype)
+
+    for i in range(resultHeight):
+        for j in range(resultWidth):
+            # Map to the nearest pixel in the original image
+            orig_i = int(i * (height / resultHeight))
+            orig_j = int(j * (width / resultWidth))
+
+            # Copy the pixel from the original array to the new array
+            newArr[i, j] = arr[orig_i, orig_j]
+
+    return newArr  # Ensure it returns arr, even if no changes are made
