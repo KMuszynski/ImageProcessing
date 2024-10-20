@@ -79,7 +79,7 @@ if len(sys.argv) == 3:
 #############################
 
 # Load the image
-im = Image.open("./components/images/lena.bmp")
+im = Image.open("./components/images/lenac_small.bmp")
 arr = np.array(im)
 
 # Apply the command
