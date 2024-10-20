@@ -7,7 +7,7 @@ import sys
 # Import functions from other files
 from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
-from components.functions.noise import doMedianFilter
+from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.similarity import doMeanSquareError, doPeakMeanSquareError, doSignalToNoiseRatio, \
     doPeakSignalToNoiseRatio, doMaximumDifference
 
@@ -79,7 +79,7 @@ if len(sys.argv) == 3:
 #############################
 
 # Load the image
-im = Image.open("./components/images/lenac_small.bmp")
+im = Image.open("./components/images/lena.bmp")
 arr = np.array(im)
 
 # Apply the command
