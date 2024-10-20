@@ -12,7 +12,7 @@
 
 # Noise Removal Methods
 [x] doMedianFilter(param, arr) - Median filter
-[ ] doGeometricMeanFilter(param, arr) - Geometric mean filter (placeholder, needs implementation)
+[x] doGeometricMeanFilter(param, arr) - Geometric mean filter
 
 # Similarity Measures
 [ ] doMeanSquareError(param, arr) - Mean square error (placeholder, needs implementation)
