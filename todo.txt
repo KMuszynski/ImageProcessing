@@ -6,9 +6,9 @@
 # Geometric Operations
 [x] doHorizontalFlip(arr) - Horizontal flip - corrected
 [x] doVerticalFlip(param, arr) - Vertical flip
-[ ] doDiagonalFlip(param, arr) - Diagonal flip (placeholder, needs implementation)
-[ ] doShrink(param, arr) - Image shrinking (placeholder, needs implementation)
-[ ] doEnlarge(param, arr) - Image enlargement (placeholder, needs implementation)
+[x] doDiagonalFlip(param, arr) - Diagonal flip (placeholder, needs implementation)
+[x] doShrink(param, arr) - Image shrinking (placeholder, needs implementation)
+[x] doEnlarge(param, arr) - Image enlargement (placeholder, needs implementation)
 
 # Noise Removal Methods
 [ ] doMedianFilter(param, arr) - Median filter (placeholder, needs implementation)
