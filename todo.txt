@@ -6,12 +6,12 @@
 # Geometric Operations
 [x] doHorizontalFlip(arr) - Horizontal flip - corrected
 [x] doVerticalFlip(param, arr) - Vertical flip
-[x] doDiagonalFlip(param, arr) - Diagonal flip (placeholder, needs implementation)
-[x] doShrink(param, arr) - Image shrinking (placeholder, needs implementation)
-[x] doEnlarge(param, arr) - Image enlargement (placeholder, needs implementation)
+[x] doDiagonalFlip(param, arr) - Diagonal flip
+[x] doShrink(param, arr) - Image shrinking
+[x] doEnlarge(param, arr) - Image enlargement
 
 # Noise Removal Methods
-[x] doMedianFilter(param, arr) - Median filter (placeholder, needs implementation)
+[x] doMedianFilter(param, arr) - Median filter
 [ ] doGeometricMeanFilter(param, arr) - Geometric mean filter (placeholder, needs implementation)
 
 # Similarity Measures
