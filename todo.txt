@@ -11,7 +11,7 @@
 [x] doEnlarge(param, arr) - Image enlargement (placeholder, needs implementation)
 
 # Noise Removal Methods
-[ ] doMedianFilter(param, arr) - Median filter (placeholder, needs implementation)
+[x] doMedianFilter(param, arr) - Median filter (placeholder, needs implementation)
 [ ] doGeometricMeanFilter(param, arr) - Geometric mean filter (placeholder, needs implementation)
 
 # Similarity Measures

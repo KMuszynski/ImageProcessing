@@ -29,6 +29,8 @@ def doVerticalFlip(arr):
 
     width = arr.shape[1]
     height = arr.shape[0]
+    print(f"Image dimensions: {width}x{height}")
+
     arr2 = arr[::-1]
     return arr2
 
@@ -75,10 +77,9 @@ def doShrink(param, arr):
     return newArr
 
 
-
 def doEnlarge(param, arr):
     print("Function doEnlarge invoked with param: " + param)
-    
+
     param = int(param)
     # Ensure input is a numpy array
     arr = np.array(arr)
