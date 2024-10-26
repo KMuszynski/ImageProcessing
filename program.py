@@ -46,6 +46,7 @@ def print_help():
 
 
 noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip"]
+noiseRemovalFunctions = ["--median", "--gmean"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -56,7 +57,7 @@ if len(sys.argv) == 1:
 # Store the command from the command line
 command = sys.argv[1]
 
-# Check if there are only two arguments (command and one parameter)
+# Check if there are only two arguments (program.py + command)
 if len(sys.argv) == 2:
     if command not in noParamFunctions:
         print("Too few command line parameters given.\n")
@@ -65,49 +66,48 @@ if len(sys.argv) == 2:
 
 # Check if there are more than two arguments
 if len(sys.argv) > 3:
-    print("Too many command line parameters given.\n")
-    print_help()
-    sys.exit()
+    if command not in noiseRemovalFunctions:
+        print("Too many command line parameters given.\n")
+        print_help()
+        sys.exit()
 
 # Store the parameter if present
 if len(sys.argv) == 3:
     param = sys.argv[2]
 
 # Load the images
-im = Image.open("./components/images/noise/uniform/lenac_uniform1_small.bmp")
+im = Image.open("./components/images/c_lenac_small.bmp")
 arr = np.array(im)
-
-im_noisy = Image.open("./components/images/noise/uniform/lenac_uniform3_small.bmp")
-arr_noisy = np.array(im_noisy)
 
 # Apply the command
 if command == '--help':
     print_help()
+    sys.exit()
 elif command == '--brightness':
-    arr = doBrightness(param, arr)
+    result_arr = doBrightness(param, arr)
 elif command == '--contrast':
-    arr = doContrast(param, arr)
+    result_arr = doContrast(param, arr)
 elif command == '--negative':
-    arr = doNegative(arr)
+    result_arr = doNegative(arr)
 elif command == '--hflip':
-    arr = doHorizontalFlip(arr)
+    result_arr = doHorizontalFlip(arr)
 elif command == '--vflip':
-    arr = doVerticalFlip(arr)
+    result_arr = doVerticalFlip(arr)
 elif command == '--dflip':
-    arr = doDiagonalFlip(arr)
+    result_arr = doDiagonalFlip(arr)
 elif command == '--shrink':
-    arr = doShrink(param, arr)
+    result_arr = doShrink(param, arr)
 elif command == '--enlarge':
-    arr = doEnlarge(param, arr)
+    result_arr = doEnlarge(param, arr)
 elif command == '--median':
-    arr = doMedianFilter(param, arr_noisy)
+    result_arr = doMedianFilter(param)
 elif command == '--gmean':
-    arr = doGeometricMeanFilter(param, arr)
+    result_arr = doGeometricMeanFilter(param, arr)
 else:
     print("Unknown command: " + command)
     print_help()
     sys.exit()
 
-# Create the new image from the modified array
-newIm = Image.fromarray(arr.astype(np.uint8))
+# Create the new image from the result array
+newIm = Image.fromarray(result_arr.astype(np.uint8))
 newIm.save("result.bmp")
