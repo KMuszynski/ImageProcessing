@@ -5,6 +5,7 @@ import sys
 from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
+from components.functions.similarity import doMeanSquareError, doPeakMeanSquareError, doSignalToNoiseRatio, doPeakSignalToNoiseRatio, doMaximumDifference
 
 
 def print_help():
@@ -47,6 +48,13 @@ def print_help():
 
 noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip"]
 noiseRemovalFunctions = ["--median", "--gmean"]
+similarityMetrics = {
+    "mse": doMeanSquareError,
+    "pmse": doPeakMeanSquareError,
+    "snr": doSignalToNoiseRatio,
+    "psnr": doPeakSignalToNoiseRatio,
+    "md": doMaximumDifference
+}
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -71,42 +79,60 @@ if len(sys.argv) > 3:
         print_help()
         sys.exit()
 
-# Store the parameter if present
-if len(sys.argv) == 3:
+# Store param and metric if present
+param = None
+metric = None
+if len(sys.argv) >= 3:
     param = sys.argv[2]
+if len(sys.argv) == 4:
+    metric = sys.argv[3]
+
 
 # Load the images
-im = Image.open("./components/images/c_lenac_small.bmp")
-arr = np.array(im)
+original_image = Image.open("./components/images/noise/elementary.bmp")
+noisy_image = Image.open("./components/images/noise/n3_lenac_normal3_small.bmp")
+arr_original = np.array(original_image)
+arr_noisy = np.array(noisy_image)
 
 # Apply the command
 if command == '--help':
     print_help()
     sys.exit()
 elif command == '--brightness':
-    result_arr = doBrightness(param, arr)
+    result_arr = doBrightness(param, arr_original)
 elif command == '--contrast':
-    result_arr = doContrast(param, arr)
+    result_arr = doContrast(param, arr_original)
 elif command == '--negative':
-    result_arr = doNegative(arr)
+    result_arr = doNegative(arr_original)
 elif command == '--hflip':
-    result_arr = doHorizontalFlip(arr)
+    result_arr = doHorizontalFlip(arr_original)
 elif command == '--vflip':
-    result_arr = doVerticalFlip(arr)
+    result_arr = doVerticalFlip(arr_original)
 elif command == '--dflip':
-    result_arr = doDiagonalFlip(arr)
+    result_arr = doDiagonalFlip(arr_original)
 elif command == '--shrink':
-    result_arr = doShrink(param, arr)
+    result_arr = doShrink(param, arr_original)
 elif command == '--enlarge':
-    result_arr = doEnlarge(param, arr)
+    result_arr = doEnlarge(param, arr_original)
 elif command == '--median':
-    result_arr = doMedianFilter(param)
+    result_arr = doMedianFilter(param, arr_noisy)
 elif command == '--gmean':
-    result_arr = doGeometricMeanFilter(param, arr)
+    result_arr = doGeometricMeanFilter(param, arr_noisy)
 else:
     print("Unknown command: " + command)
     print_help()
     sys.exit()
+
+if metric and command in noiseRemovalFunctions:
+    if metric in similarityMetrics:
+        similarity_noisy = similarityMetrics[metric](arr_original, arr_noisy)
+        similarity_denoised = similarityMetrics[metric](arr_original, result_arr)
+        print(f"{metric} between original and noisy ({metric}): {similarity_noisy}")
+        print(f"{metric} between original and denoised ({metric}): {similarity_denoised}")
+    else:
+        print(f"Unknown similarity metric: {metric}")
+        print_help()
+        sys.exit()
 
 # Create the new image from the result array
 newIm = Image.fromarray(result_arr.astype(np.uint8))
