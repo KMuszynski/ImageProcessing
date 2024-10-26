@@ -1,4 +1,3 @@
-# components/functions/noise.py
 import numpy as np
 
 

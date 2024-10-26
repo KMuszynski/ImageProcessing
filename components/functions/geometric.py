@@ -1,4 +1,3 @@
-# components/functions/geometric.py
 import numpy as np
 
 

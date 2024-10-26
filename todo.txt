@@ -15,8 +15,16 @@
 [x] doGeometricMeanFilter(param, arr) - Geometric mean filter
 
 # Similarity Measures
-[ ] doMeanSquareError(param, arr) - Mean square error (placeholder, needs implementation)
-[ ] doPeakMeanSquareError(param, arr) - Peak mean square error (placeholder, needs implementation)
-[ ] doSignalToNoiseRatio(param, arr) - Signal to noise ratio (placeholder, needs implementation)
-[ ] doPeakSignalToNoiseRatio(param, arr) - Peak signal to noise ratio (placeholder, needs implementation)
-[ ] doMaximumDifference(param, arr) - Maximum difference (placeholder, needs implementation)
+[x] doMeanSquareError(param, arr) - Mean square error (placeholder, needs implementation)
+[x] doPeakMeanSquareError(param, arr) - Peak mean square error (placeholder, needs implementation)
+[x] doSignalToNoiseRatio(param, arr) - Signal to noise ratio (placeholder, needs implementation)
+[x] doPeakSignalToNoiseRatio(param, arr) - Peak signal to noise ratio (placeholder, needs implementation)
+[x] doMaximumDifference(param, arr) - Maximum difference (placeholder, needs implementation)
+
+# Refactoring
+Proposition of how the similarity calculation should be performed after the noise removal is as follows:
+
+The similarity calculation methods should be available as the additional parameter for the noise removal methods.
+User chooses the desired noise removal method and passes optional parameter which indicates which method
+should be used for comparing the original image with the result image (after the noise removal).
+If there is no additional argument, the program performs just the noise removal without comparison.

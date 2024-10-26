@@ -1,5 +1,3 @@
-# components/functions/elementary.py
-
 import numpy as np
 
 
