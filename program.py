@@ -26,13 +26,6 @@ def print_help():
             
             --median <size>            Apply median filter with the specified size
             --gmean <size>             Apply geometric mean filter with the specified size
-
-        Similarity Metrics (optional for noise removal methods):
-            mse                        Mean square error
-            pmse                       Peak mean square error
-            snr                        Signal to noise ratio
-            psnr                       Peak signal to noise ratio
-            md                         Maximum difference
         
         Examples:
             python3 program.py --brightness 50
