@@ -4,10 +4,10 @@ from components.functions.similarity import doMeanSquareError, doPeakMeanSquareE
     doPeakSignalToNoiseRatio, doMaximumDifference
 
 # Image without noise
-original_image = Image.open("./components/images/noise/lena.bmp")
+original_image = Image.open("./components/images/noise-color/lenac.bmp")
 original_arr = np.array(original_image)
 
-noisy_image = Image.open("./components/images/noise/lena_normal3.bmp")
+noisy_image = Image.open("./components/images/noise-color/lenac_normal3.bmp")
 noisy_arr = np.array(noisy_image)
 
 # Noise removal result
@@ -42,6 +42,6 @@ def compareOriginalResult():
     print(f"Peak Signal to Noise Ratio (PSNR): {psnr}")
     print(f"Maximum Difference (MD): {md}")
 
-
+print("comparison for impulse distribution")
 compareOriginalNoisy()
 compareOriginalResult()

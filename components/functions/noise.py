@@ -1,12 +1,11 @@
 import numpy as np
 
-
 def doMedianFilter(param, arr):
-    print("Function doMedianFilter invoked with param: " + param)
-
+    print("Function doMedianFilter invoked with param: " + str(param))
+    
     param = int(param)
     arr = np.array(arr)
-
+    
     if arr.ndim == 2:  # Grayscale image
         height, width = arr.shape
         channels = 1
@@ -14,11 +13,9 @@ def doMedianFilter(param, arr):
         height, width, channels = arr.shape
     else:
         raise ValueError("Unexpected array shape. Please check the image format.")
-
+    
     # Padding size for the kernel (param x param window)
     pad_size = param // 2
-
-    # Empty array to store results
     result_arr = np.zeros_like(arr)
 
     for c in range(channels):
@@ -32,10 +29,17 @@ def doMedianFilter(param, arr):
             for j in range(width):
                 # Extract the neighborhood window
                 window = padded_arr[i:i + param, j:j + param].flatten()
-
-                # Sort the values in the window and find the median
-                median_value = np.median(sorted(window))
-
+                
+                # Sort the window to find the median
+                window_sorted = sorted(window)
+                window_len = len(window_sorted)
+                
+                # Calculate the median manually
+                if window_len % 2 == 1:
+                    median_value = window_sorted[window_len // 2]  # Middle element for odd length
+                else:
+                    median_value = (window_sorted[window_len // 2 - 1] + window_sorted[window_len // 2]) / 2  # Average of two middle elements
+                
                 # Set the median value to the output array
                 if channels == 1:
                     result_arr[i, j] = median_value
@@ -45,29 +49,12 @@ def doMedianFilter(param, arr):
     return result_arr
 
 
-# [[ 1, 2, 3],
-#  [ 4, 5, 6],
-#  [ 7, 8, 9]]
-#
-# [[ 0, 0, 0, 0, 0],
-#  [ 0, 1, 2, 3, 0],
-#  [ 0, 4, 5, 6, 0],
-#  [ 0, 7, 8, 9, 0],
-#  [ 0, 0, 0, 0, 0]]
-#
-# [[ 0, 0, 0],
-#  [ 0, 1, 2],
-#  [ 0, 4, 5]]
-#
-# [0, 0, 0, 0, 0, 1, 2, 4, 5] -> 0
-
-
 def doGeometricMeanFilter(param, arr):
     print("Function doGeometricMeanFilter invoked with param: " + str(param))
 
     param = int(param)
     arr = np.array(arr)
-
+    
     if arr.ndim == 2:  # Grayscale
         height, width = arr.shape
         channels = 1
@@ -75,11 +62,9 @@ def doGeometricMeanFilter(param, arr):
         height, width, channels = arr.shape
     else:
         raise ValueError("Unexpected array shape. Please check the image format.")
-
+    
     # Padding size for the kernel (param x param window)
     pad_size = param // 2
-
-    # Empty array to store results
     result_arr = np.zeros_like(arr)
 
     for c in range(channels):
@@ -92,14 +77,15 @@ def doGeometricMeanFilter(param, arr):
         for i in range(height):
             for j in range(width):
                 # Extract the neighborhood window
-                if channels == 1:
-                    window = padded_arr[i:i + param, j:j + param].flatten()
-                else:
-                    window = padded_arr[i:i + param, j:j + param].flatten()
-
-                # Calculate the geometric mean
-                geometric_mean = np.exp(np.mean(np.log(window + 1e-10)))  # Adding a small value to avoid log(0)
-
+                window = padded_arr[i:i + param, j:j + param].flatten()
+                
+                # Calculate the geometric mean manually
+                product = 1.0
+                for value in window:
+                    product *= value + 1e-10  # Adding a small value to avoid log(0)
+                
+                geometric_mean = product ** (1 / len(window))
+                
                 # Set the geometric mean value to the output array
                 if channels == 1:
                     result_arr[i, j] = geometric_mean

@@ -66,7 +66,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image = Image.open("./components/images/noise/lena_normal3.bmp")
+image = Image.open("./components/images/noise-color/lenac_impulse3.bmp")
 arr = np.array(image)
 
 # Apply the command
