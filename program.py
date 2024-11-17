@@ -5,6 +5,7 @@ import sys
 from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
+from components.functions.histogram import generate_histogram_image
 
 
 def print_help():
@@ -39,26 +40,26 @@ def print_help():
 noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip"]
 
 # Check if no command line parameters were given
-if len(sys.argv) == 1:
-    print("No command line parameters given.\n")
-    print_help()
-    sys.exit()
+# if len(sys.argv) == 1:
+#     print("No command line parameters given.\n")
+#     print_help()
+#     sys.exit()
 
 # Store the command from the command line
 command = sys.argv[1]
 
 # Check if there are only two arguments (program.py + command)
-if len(sys.argv) == 2:
-    if command not in noParamFunctions:
-        print("Too few command line parameters given.\n")
-        print_help()
-        sys.exit()
+# if len(sys.argv) == 2:
+#     if command not in noParamFunctions:
+#         print("Too few command line parameters given.\n")
+#         print_help()
+#         sys.exit()
 
 # Check if there are more than two arguments
-if len(sys.argv) > 3:
-    print("Too many command line parameters given.\n")
-    print_help()
-    sys.exit()
+# if len(sys.argv) > 3:
+#     print("Too many command line parameters given.\n")
+#     print_help()
+#     sys.exit()
 
 # Store param and metric if present
 param = None
@@ -66,7 +67,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image = Image.open("./components/images/noise-color/lenac_impulse3.bmp")
+image = Image.open("./components/images/c_lenac_small.bmp")
 arr = np.array(image)
 
 # Apply the command
@@ -93,6 +94,10 @@ elif command == '--median':
     result_arr = doMedianFilter(param, arr)
 elif command == '--gmean':
     result_arr = doGeometricMeanFilter(param, arr)
+elif command == '--histogram':
+    channel = None if param.lower() == 'none' else int(param)
+    generate_histogram_image(arr, channel)
+    sys.exit()
 else:
     print("Unknown command: " + command)
     print_help()
