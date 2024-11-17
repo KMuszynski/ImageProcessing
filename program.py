@@ -6,7 +6,8 @@ from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_histogram
-from components.functions.filtration import universal_filter, optimized_slowpass_filter
+from components.functions.filtration import universal_filter, optimized_slowpass_filterfrom components.functions.rayleigh import apply_rayleigh_pdf
+
 
 def print_help():
     help_text = """
@@ -40,7 +41,7 @@ def print_help():
     print(help_text)
 
 
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip", "--slowpass"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -106,10 +107,6 @@ elif command == '--histogram':
     calculate_histogram(image_path, channel=param, save_path=save_path)
     print(f"Histogram successfully saved as {save_path}!")
     sys.exit()
-elif command == '--universal':
-    result_arr = universal_filter(arr, int(param))  # universal low pass filter
-elif command == '--slowpass':
-    result_arr = optimized_slowpass_filter(arr)  # optimized low pass filter
 else:
     print("Unknown command: " + command)
     print_help()
