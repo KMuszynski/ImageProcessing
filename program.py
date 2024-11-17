@@ -5,7 +5,7 @@ import sys
 from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
-from components.functions.histogram import calculate_histogram
+from components.functions.histogram import calculate_save_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf
 from components.functions.laplacian import ll_operator
@@ -110,7 +110,7 @@ elif command == '--histogram':
         print("Invalid channel! Choose from 'gray', 'red', 'green', or 'blue'.")
         sys.exit()
     save_path = "histogram_" + param + ".png"
-    calculate_histogram(image_path, channel=param, save_path=save_path)
+    calculate_save_histogram(image_path, channel=param, save_path=save_path)
     print(f"Histogram successfully saved as {save_path}!")
     sys.exit()
 elif command == '--rayleigh':

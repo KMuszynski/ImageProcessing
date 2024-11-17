@@ -3,7 +3,33 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def calculate_histogram(image_path, channel="gray", save_path="histogram.png"):
+def calculate_manual_histogram(image_array, channel=None):
+    """
+    Calculate a histogram for a grayscale or single channel of an RGB image.
+
+    Parameters:
+        image_array (numpy.ndarray): Image array (grayscale or RGB).
+        channel (int or None): Index of the channel to process (0: Red, 1: Green, 2: Blue).
+                               If None, processes grayscale.
+
+    Returns:
+        numpy.ndarray: Histogram array with 256 bins.
+    """
+    histogram = np.zeros(256, dtype=int)
+
+    if channel is None:
+        # Grayscale image
+        for pixel in image_array.flatten():
+            histogram[pixel] += 1
+    else:
+        # Single channel of RGB image
+        for pixel in image_array[:, :, channel].flatten():
+            histogram[pixel] += 1
+
+    return histogram
+
+
+def calculate_save_histogram(image_path, channel="gray", save_path="histogram.png"):
     """
     Calculate and save the histogram of the specified channel from the given image.
 
@@ -18,10 +44,11 @@ def calculate_histogram(image_path, channel="gray", save_path="histogram.png"):
     if channel == "gray":
         # Convert to grayscale if required
         gray_image = image.convert("L")
-        pixel_values = np.array(gray_image).flatten()
+        pixel_values = np.array(gray_image)
+        histogram = calculate_manual_histogram(pixel_values)
 
         # Plot the histogram for grayscale
-        plt.hist(pixel_values, bins=256, range=(0, 256), color='gray')
+        plt.bar(range(256), histogram, color='gray')
         plt.title("Grayscale Histogram")
         plt.xlabel("Pixel Value")
         plt.ylabel("Frequency")
@@ -35,10 +62,10 @@ def calculate_histogram(image_path, channel="gray", save_path="histogram.png"):
         if channel not in channel_map:
             raise ValueError(f"Invalid channel '{channel}'. Choose from 'red', 'green', 'blue', or 'gray'.")
 
-        channel_values = pixel_values[:, :, channel_map[channel]].flatten()
+        histogram = calculate_manual_histogram(pixel_values, channel_map[channel])
 
         # Plot the histogram for the specified channel
-        plt.hist(channel_values, bins=256, range=(0, 256), color=channel)
+        plt.bar(range(256), histogram, color=channel)
         plt.title(f"{channel.capitalize()} Channel Histogram")
         plt.xlabel("Pixel Value")
         plt.ylabel("Frequency")
