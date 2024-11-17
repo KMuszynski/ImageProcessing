@@ -7,7 +7,7 @@ from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doD
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_save_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
-from components.functions.rayleigh import apply_rayleigh_pdf
+from components.functions.rayleigh import apply_rayleigh_pdf_histogram
 from components.functions.laplacian import ll_operator
 
 
@@ -73,7 +73,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/c_lenac_small.bmp"
+image_path = "./components/images/noise-color/lenac.bmp"
 image = Image.open(image_path)
 arr = np.array(image)
 
@@ -116,8 +116,8 @@ elif command == '--histogram':
 elif command == '--rayleigh':
     sigma = 50
     try:
-        result_arr = apply_rayleigh_pdf(arr, sigma=sigma)
-        print(f"Image enhanced using Rayleigh PDF with sigma={sigma}.")
+        result_arr = apply_rayleigh_pdf_histogram(arr, sigma=sigma)
+        print(f"Image enhanced using histogram-based Rayleigh PDF with sigma={sigma}.")
     except Exception as e:
         print(f"Error: {e}")
         sys.exit()
