@@ -8,6 +8,7 @@ from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf
+from components.functions.laplacian import ll_operator
 
 
 def print_help():
@@ -120,6 +121,10 @@ elif command == '--rayleigh':
     except Exception as e:
         print(f"Error: {e}")
         sys.exit()
+elif command == '--oll':
+    # Get the alpha parameter, default is 1.0
+    alpha = float(param) if param else 1.0
+    result_arr = ll_operator(arr, alpha)
 else:
     print("Unknown command: " + command)
     print_help()
