@@ -42,7 +42,7 @@ def print_help():
     print(help_text)
 
 
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass']
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass', "--rayleigh"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -112,6 +112,14 @@ elif command == '--histogram':
     calculate_histogram(image_path, channel=param, save_path=save_path)
     print(f"Histogram successfully saved as {save_path}!")
     sys.exit()
+elif command == '--rayleigh':
+    sigma = 50
+    try:
+        result_arr = apply_rayleigh_pdf(arr, sigma=sigma)
+        print(f"Image enhanced using Rayleigh PDF with sigma={sigma}.")
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit()
 else:
     print("Unknown command: " + command)
     print_help()
