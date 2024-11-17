@@ -6,7 +6,8 @@ from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_histogram
-from components.functions.filtration import universal_filter, optimized_slowpass_filterfrom components.functions.rayleigh import apply_rayleigh_pdf
+from components.functions.filtration import universal_filter, optimized_slowpass_filterfrom
+from components.functions.rayleigh import apply_rayleigh_pdf
 
 
 def print_help():
