@@ -9,6 +9,16 @@ from components.functions.histogram import calculate_save_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf_histogram
 from components.functions.laplacian import ll_operator
+from components.functions.statistic import (
+    calculate_mean,
+    calculate_variance,
+    calculate_standard_deviation,
+    calculate_variation_coefficient_i,
+    calculate_asymmetry_coefficient,
+    calculate_flattening_coefficient,
+    calculate_variation_coefficient_ii,
+    calculate_entropy,
+)
 
 
 def print_help():
@@ -118,8 +128,32 @@ elif command == '--histogram':
 elif command == '--rayleigh':
     try:
         alpha = float(param) if param else 50  # Default alpha value is 50
+
+        # Calculate and print metrics BEFORE enhancement
+        print("Metrics BEFORE enhancement:")
+        print(f"Mean: {calculate_mean(arr):.2f}")
+        print(f"Variance: {calculate_variance(arr):.2f}")
+        print(f"Standard Deviation: {calculate_standard_deviation(arr):.2f}")
+        print(f"Variation Coefficient I: {calculate_variation_coefficient_i(arr):.2f}")
+        print(f"Asymmetry Coefficient: {calculate_asymmetry_coefficient(arr):.2f}")
+        print(f"Flattening Coefficient: {calculate_flattening_coefficient(arr):.2f}")
+        print(f"Variation Coefficient II: {calculate_variation_coefficient_ii(arr):.2f}")
+        print(f"Entropy: {calculate_entropy(arr):.2f}")
+
+        # Apply Rayleigh enhancement
         result_arr = apply_rayleigh_pdf_histogram(arr, alpha=alpha)
-        print(f"Image enhanced using histogram-based Rayleigh PDF with alpha={alpha}.")
+        print(f"\nImage enhanced using histogram-based Rayleigh PDF with alpha={alpha}.")
+
+        # Calculate and print metrics AFTER enhancement
+        print("\nMetrics AFTER enhancement:")
+        print(f"Mean: {calculate_mean(result_arr):.2f}")
+        print(f"Variance: {calculate_variance(result_arr):.2f}")
+        print(f"Standard Deviation: {calculate_standard_deviation(result_arr):.2f}")
+        print(f"Variation Coefficient I: {calculate_variation_coefficient_i(result_arr):.2f}")
+        print(f"Asymmetry Coefficient: {calculate_asymmetry_coefficient(result_arr):.2f}")
+        print(f"Flattening Coefficient: {calculate_flattening_coefficient(result_arr):.2f}")
+        print(f"Variation Coefficient II: {calculate_variation_coefficient_ii(result_arr):.2f}")
+        print(f"Entropy: {calculate_entropy(result_arr):.2f}")
     except Exception as e:
         print(f"Error during Rayleigh enhancement: {e}")
         sys.exit()
