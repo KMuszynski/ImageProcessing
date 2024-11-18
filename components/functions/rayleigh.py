@@ -1,4 +1,6 @@
 import numpy as np
+from PIL import ImageOps, Image
+
 from components.functions.histogram import calculate_manual_histogram
 
 
@@ -20,12 +22,16 @@ def apply_rayleigh_pdf_histogram(image_array, alpha=50):
 
     # If the image is RGB
     elif len(image_array.shape) == 3 and image_array.shape[2] == 3:
-        # Flatten all channels to calculate a global histogram
-        combined_histogram = calculate_manual_histogram(image_array.flatten())
+        # Convert to grayscale for global histogram computation
+        grayscale_image = ImageOps.grayscale(Image.fromarray(image_array))
+        grayscale_array = np.array(grayscale_image)
+        histogram = calculate_manual_histogram(grayscale_array)
+
+        # Apply the same transformation to all channels
         enhanced_channels = []
         for channel in range(3):  # Process R, G, B channels together
             enhanced_channel = _enhance_with_histogram(
-                image_array[:, :, channel], combined_histogram, alpha
+                image_array[:, :, channel], histogram, alpha
             )
             enhanced_channels.append(enhanced_channel)
 
@@ -57,10 +63,11 @@ def _enhance_with_histogram(channel_array, histogram, alpha):
     enhanced_channel = np.zeros_like(normalized_channel, dtype=float)
     for f in range(256):
         if cdf[f] > 0:  # Avoid log(0)
+            cdf_clamped = np.clip(cdf[f], 1e-8, 1)  # Clamp to avoid issues
             enhanced_channel[channel_array == f] = (
-                alpha * np.sqrt(2 * np.log(1 / cdf[f]))
+                    alpha * np.sqrt(2 * np.log(1 / cdf_clamped))
             )
 
-    # Scale the result to [0, 255]
+    # Normalize to range [0, 255]
     enhanced_channel = np.clip(enhanced_channel, 0, 255)
     return enhanced_channel.astype(np.uint8)
