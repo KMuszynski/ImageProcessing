@@ -2,15 +2,21 @@ import numpy as np
 
 
 def doBrightness(param, arr):
-    if int(param) <= 0:
-        print("error divide by zero")
+    try:
+        brightness_value = int(param)
+    except ValueError:
+        print("error: brightness value must be an integer")
         exit()
-    if int(param) > 100:
-        print("error brightness can't exceed 100")
+
+    if brightness_value < -100 or brightness_value > 100:
+        print("error: brightness must be between -100 and 100")
         exit()
-    print("Function doBrightness invoked with param: " + param)
-    arr = arr * (int(param) / 100)
-    return arr
+
+    print("Function doBrightness invoked with param: " + str(param))
+    arr = arr.astype(np.int16)
+    arr = arr + brightness_value
+    arr = np.clip(arr, 0, 255)
+    return arr.astype(np.uint8)
 
 
 def doContrast(param, arr):

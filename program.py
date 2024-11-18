@@ -85,10 +85,10 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/rayleigh_underwater_100.bmp"
+image_path = "./components/images/lenac.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
-    image = image.convert("RGB")  # Convert to RGB if it has an alpha channel or unsupported mode
+    image = image.convert("RGB")
 arr = np.array(image)
 
 # Apply the command
