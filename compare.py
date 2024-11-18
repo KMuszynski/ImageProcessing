@@ -42,6 +42,7 @@ def compareOriginalResult():
     print(f"Peak Signal to Noise Ratio (PSNR): {psnr}")
     print(f"Maximum Difference (MD): {md}")
 
+
 print("comparison for impulse distribution")
 compareOriginalNoisy()
 compareOriginalResult()

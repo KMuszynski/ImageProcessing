@@ -20,17 +20,21 @@ def doBrightness(param, arr):
 
 
 def doContrast(param, arr):
-    contrast_factor = float(param) / 100
+    param = int(param)
+    if param < -100 or param > 100:
+        print("error: contrast value must be between -100 and 100")
+        exit()
+    try:
+        contrast_factor = 1 + (float(param) / 100)
+    except ValueError:
+        print("error: contrast value must be a number")
+        exit()
+
     pivot = 128  # Midpoint for 8-bit images
-
-    # Calculate the new pixel values
+    arr = arr.astype(np.int16)  # Prevent overflow
     new_arr = pivot + contrast_factor * (arr - pivot)
-
-    # Manually clamp values to ensure they stay within the valid range [0, 255]
-    new_arr[new_arr < 0] = 0
-    new_arr[new_arr > 255] = 255
-
-    print("Function doContrast invoked with param: " + param)
+    new_arr = np.clip(new_arr, 0, 255)
+    print("Function doContrast invoked with param: " + str(param))
     return new_arr.astype(np.uint8)
 
 

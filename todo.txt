@@ -2,6 +2,6 @@
 
 [x] Usage
 [x] Brightness
-[ ] Contrast
+[x] Contrast
 [ ] Investigate: why small SNR values
 [ ] Investigate: why MD too big (255)
