@@ -73,7 +73,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/lenac.bmp"
+image_path = "./components/images/messer.bmp"
 image = Image.open(image_path)
 arr = np.array(image)
 
@@ -114,12 +114,12 @@ elif command == '--histogram':
     print(f"Histogram successfully saved as {save_path}!")
     sys.exit()
 elif command == '--rayleigh':
-    sigma = 50
     try:
-        result_arr = apply_rayleigh_pdf_histogram(arr, sigma=sigma)
-        print(f"Image enhanced using histogram-based Rayleigh PDF with sigma={sigma}.")
+        alpha = float(param) if param else 50  # Default alpha value is 50
+        result_arr = apply_rayleigh_pdf_histogram(arr, alpha=alpha)
+        print(f"Image enhanced using histogram-based Rayleigh PDF with alpha={alpha}.")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error during Rayleigh enhancement: {e}")
         sys.exit()
 elif command == '--oll':
     # Get the alpha parameter, default is 1.0

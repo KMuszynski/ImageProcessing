@@ -18,7 +18,7 @@ def calculate_manual_histogram(image_array, channel=None):
     histogram = np.zeros(256, dtype=int)
 
     if channel is None:
-        # Grayscale image
+        # Grayscale image or global histogram (flattened 1D RGB)
         for pixel in image_array.flatten():
             histogram[pixel] += 1
     else:

@@ -2,13 +2,13 @@ import numpy as np
 from components.functions.histogram import calculate_manual_histogram
 
 
-def apply_rayleigh_pdf_histogram(image_array, sigma=50):
+def apply_rayleigh_pdf_histogram(image_array, alpha=50):
     """
     Enhance image quality using a histogram-based Rayleigh PDF method.
 
     Parameters:
         image_array (numpy.ndarray): Image array (grayscale or RGB).
-        sigma (float): Scale parameter for the Rayleigh PDF.
+        alpha (float): Scale parameter for the Rayleigh PDF.
 
     Returns:
         numpy.ndarray: Enhanced image array.
@@ -16,7 +16,7 @@ def apply_rayleigh_pdf_histogram(image_array, sigma=50):
     # If the image is grayscale
     if len(image_array.shape) == 2:
         histogram = calculate_manual_histogram(image_array)
-        return _enhance_with_histogram(image_array, histogram, sigma)
+        return _enhance_with_histogram(image_array, histogram, alpha)
 
     # If the image is RGB
     elif len(image_array.shape) == 3 and image_array.shape[2] == 3:
@@ -25,7 +25,7 @@ def apply_rayleigh_pdf_histogram(image_array, sigma=50):
         enhanced_channels = []
         for channel in range(3):  # Process R, G, B channels together
             enhanced_channel = _enhance_with_histogram(
-                image_array[:, :, channel], combined_histogram, sigma
+                image_array[:, :, channel], combined_histogram, alpha
             )
             enhanced_channels.append(enhanced_channel)
 
@@ -35,14 +35,14 @@ def apply_rayleigh_pdf_histogram(image_array, sigma=50):
         raise ValueError("Unsupported image format. Must be grayscale or RGB.")
 
 
-def _enhance_with_histogram(channel_array, histogram, sigma):
+def _enhance_with_histogram(channel_array, histogram, alpha):
     """
     Enhance a single channel using a histogram and Rayleigh PDF.
 
     Parameters:
         channel_array (numpy.ndarray): Single-channel image array.
         histogram (numpy.ndarray): Precomputed histogram (256 bins).
-        sigma (float): Scale parameter for the Rayleigh PDF.
+        alpha (float): Scale parameter for the Rayleigh PDF.
 
     Returns:
         numpy.ndarray: Enhanced single-channel array.
@@ -53,11 +53,14 @@ def _enhance_with_histogram(channel_array, histogram, sigma):
     # Use histogram to calculate cumulative distribution function (CDF)
     cdf = np.cumsum(histogram) / np.sum(histogram)
 
-    # Apply Rayleigh PDF scaling based on histogram CDF
-    enhanced_channel = (cdf[channel_array] / (sigma ** 2)) * np.exp(
-        -cdf[channel_array] ** 2 / (2 * sigma ** 2)
-    )
+    # Apply Rayleigh PDF formula
+    enhanced_channel = np.zeros_like(normalized_channel, dtype=float)
+    for f in range(256):
+        if cdf[f] > 0:  # Avoid log(0)
+            enhanced_channel[channel_array == f] = (
+                alpha * np.sqrt(2 * np.log(1 / cdf[f]))
+            )
 
-    # Normalize to range [0, 255]
-    enhanced_channel = enhanced_channel / np.max(enhanced_channel)
-    return (enhanced_channel * 255).astype(np.uint8)
+    # Scale the result to [0, 255]
+    enhanced_channel = np.clip(enhanced_channel, 0, 255)
+    return enhanced_channel.astype(np.uint8)
