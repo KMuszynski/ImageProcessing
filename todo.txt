@@ -1,0 +1,7 @@
+========= Task 1 todos ===========================
+
+[x] Usage
+[x] Brightness
+[ ] Contrast
+[ ] Investigate: why small SNR values
+[ ] Investigate: why MD too big (255)
