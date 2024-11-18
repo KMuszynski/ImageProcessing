@@ -2,10 +2,12 @@ from PIL import Image
 import numpy as np
 import sys
 
+from matplotlib import pyplot as plt
+
 from components.functions.elementary import doBrightness, doContrast, doNegative
 from components.functions.geometric import doHorizontalFlip, doVerticalFlip, doDiagonalFlip, doShrink, doEnlarge
 from components.functions.noise import doMedianFilter, doGeometricMeanFilter
-from components.functions.histogram import calculate_save_histogram
+from components.functions.histogram import calculate_save_histogram, calculate_manual_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf_histogram
 from components.functions.laplacian import ll_operator
@@ -53,7 +55,7 @@ def print_help():
     print(help_text)
 
 
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass', "--rayleigh"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass', "--rayleigh", "--grayscale-histogram"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -83,7 +85,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/underwater.bmp"
+image_path = "./components/images/rayleigh_underwater_100.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")  # Convert to RGB if it has an alpha channel or unsupported mode
@@ -156,6 +158,24 @@ elif command == '--rayleigh':
         print(f"Entropy: {calculate_entropy(result_arr):.2f}")
     except Exception as e:
         print(f"Error during Rayleigh enhancement: {e}")
+        sys.exit()
+elif command == '--grayscale-histogram':
+    try:
+        # Convert the image to grayscale and return the pixel values
+        grayscale_image = image.convert("L")
+        result_arr = np.array(grayscale_image)
+
+        # Calculate and display histogram
+        histogram = calculate_manual_histogram(result_arr)
+        plt.bar(range(256), histogram, color='gray', width=1.0)
+        plt.title("Grayscale Histogram")
+        plt.xlabel("Pixel Value")
+        plt.ylabel("Frequency")
+        plt.show()
+
+        print("Grayscale histogram displayed, and grayscale image saved as 'result.bmp'.")
+    except Exception as e:
+        print(f"Error calculating grayscale histogram: {e}")
         sys.exit()
 elif command == '--oll':
     # Get the alpha parameter, default is 1.0
