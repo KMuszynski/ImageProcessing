@@ -38,24 +38,23 @@ def calculate_save_histogram(image_path, channel="gray", save_path="histogram.pn
         channel (str): Channel to process ('gray', 'red', 'green', 'blue').
         save_path (str): Path to save the histogram image.
     """
-    # Load the image using PIL
     image = Image.open(image_path)
 
     if channel == "gray":
         # Convert to grayscale if required
-        gray_image = image.convert("L")
-        pixel_values = np.array(gray_image)
+        # gray_image = image.convert("L")
+        pixel_values = np.array(image)
         histogram = calculate_manual_histogram(pixel_values)
 
         # Plot the histogram for grayscale
-        plt.bar(range(256), histogram, color='gray')
+        plt.bar(range(256), histogram, color='gray', width=1.0)
         plt.title("Grayscale Histogram")
         plt.xlabel("Pixel Value")
         plt.ylabel("Frequency")
     else:
         # Ensure the image is in RGB mode
-        rgb_image = image.convert("RGB")
-        pixel_values = np.array(rgb_image)
+        # rgb_image = image.convert("RGB")
+        pixel_values = np.array(image)
 
         # Extract the desired channel
         channel_map = {"red": 0, "green": 1, "blue": 2}
@@ -65,7 +64,7 @@ def calculate_save_histogram(image_path, channel="gray", save_path="histogram.pn
         histogram = calculate_manual_histogram(pixel_values, channel_map[channel])
 
         # Plot the histogram for the specified channel
-        plt.bar(range(256), histogram, color=channel)
+        plt.bar(range(256), histogram, color=channel, width=1.0)
         plt.title(f"{channel.capitalize()} Channel Histogram")
         plt.xlabel("Pixel Value")
         plt.ylabel("Frequency")

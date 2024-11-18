@@ -4,7 +4,7 @@ from components.functions.similarity import doMeanSquareError, doPeakMeanSquareE
     doPeakSignalToNoiseRatio, doMaximumDifference
 
 # Image without noise
-original_image = Image.open("./components/images/noise-color/lenac.bmp")
+original_image = Image.open("components/images/lenac.bmp")
 original_arr = np.array(original_image)
 
 noisy_image = Image.open("./components/images/noise-color/lenac_normal3.bmp")
