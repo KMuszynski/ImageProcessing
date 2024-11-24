@@ -20,9 +20,9 @@ def doMedianFilter(param, arr):
 
     for c in range(channels):
         if channels == 1:
-            padded_arr = np.pad(arr, pad_size, mode='constant', constant_values=0)
+            padded_arr = np.pad(arr, pad_size, mode='reflect')
         else:
-            padded_arr = np.pad(arr[:, :, c], pad_size, mode='constant', constant_values=0)
+            padded_arr = np.pad(arr[:, :, c], pad_size, mode='reflect')
 
         # Apply median filter
         for i in range(height):

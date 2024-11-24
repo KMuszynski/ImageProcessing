@@ -5,14 +5,14 @@ from components.functions.similarity import doMeanSquareError, doPeakMeanSquareE
 
 # Image without noise
 original_image = Image.open("components/images/lenac.bmp")
-original_arr = np.array(original_image)
+original_arr = np.array(original_image.getdata())
 
 noisy_image = Image.open("./components/images/noise-color/lenac_normal3.bmp")
-noisy_arr = np.array(noisy_image)
+noisy_arr = np.array(noisy_image.getdata())
 
 # Noise removal result
 result_image = Image.open("./result.bmp")
-result_arr = np.array(result_image)
+result_arr = np.array(result_image.getdata())
 
 
 def compareOriginalNoisy():
@@ -43,6 +43,6 @@ def compareOriginalResult():
     print(f"Maximum Difference (MD): {md}")
 
 
-print("comparison for impulse distribution")
 compareOriginalNoisy()
+print("\n")
 compareOriginalResult()
