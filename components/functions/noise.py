@@ -69,9 +69,9 @@ def doGeometricMeanFilter(param, arr):
 
     for c in range(channels):
         if channels == 1:
-            padded_arr = np.pad(arr, pad_size, mode='constant', constant_values=1)
+            padded_arr = np.pad(arr, pad_size, mode='reflect')
         else:
-            padded_arr = np.pad(arr[:, :, c], pad_size, mode='constant', constant_values=1)
+            padded_arr = np.pad(arr[:, :, c], pad_size, mode='reflect')
 
         # Apply geometric mean filter
         for i in range(height):
