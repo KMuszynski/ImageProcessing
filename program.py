@@ -10,7 +10,7 @@ from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_save_histogram, calculate_manual_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf_histogram
-from components.functions.laplacian import ll_operator
+from components.functions.laplacian import ll_operator, apply_roberts
 from components.functions.statistic import (
     calculate_mean,
     calculate_variance,
@@ -55,7 +55,7 @@ def print_help():
     print(help_text)
 
 
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass', "--rayleigh", "--grayscale-histogram"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass', "--rayleigh", "--grayscale-histogram", "--roberts"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -85,7 +85,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/noise-color/lenac_normal3.bmp"
+image_path = "./components/images/lenac.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
@@ -181,6 +181,15 @@ elif command == '--oll':
     # Get the alpha parameter, default is 1.0
     alpha = float(param) if param else 1.0
     result_arr = ll_operator(arr, alpha)
+
+elif command == '--roberts':
+    try:
+        result_arr = apply_roberts(arr)
+        print("Roberts operator applied.")
+    except Exception as e:
+        print(f"Error applying Roberts operator: {e}")
+        sys.exit()
+
 else:
     print("Unknown command: " + command)
     print_help()

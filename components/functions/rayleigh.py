@@ -4,7 +4,7 @@ from PIL import ImageOps, Image
 from components.functions.histogram import calculate_manual_histogram
 
 
-def apply_rayleigh_pdf_histogram(image_array, alpha=50):
+def apply_rayleigh_pdf_histogram(image_array, alpha=50):  # alpha needs to be calculated from the gmean and gmax
     """
     Enhance image quality using a histogram-based Rayleigh PDF method.
 
