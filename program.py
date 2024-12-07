@@ -85,7 +85,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/lenac.bmp"
+image_path = "./components/images/underwater.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
@@ -129,8 +129,6 @@ elif command == '--histogram':
     sys.exit()
 elif command == '--rayleigh':
     try:
-        alpha = float(param) if param else 50  # Default alpha value is 50
-
         # Calculate and print metrics BEFORE enhancement
         print("Metrics BEFORE enhancement:")
         print(f"Mean: {calculate_mean(arr):.2f}")
@@ -142,9 +140,9 @@ elif command == '--rayleigh':
         print(f"Variation Coefficient II: {calculate_variation_coefficient_ii(arr):.2f}")
         print(f"Entropy: {calculate_entropy(arr):.2f}")
 
-        # Apply Rayleigh enhancement
-        result_arr = apply_rayleigh_pdf_histogram(arr, alpha=alpha)
-        print(f"\nImage enhanced using histogram-based Rayleigh PDF with alpha={alpha}.")
+        # Apply Rayleigh enhancement with default g_min, g_max, q
+        result_arr = apply_rayleigh_pdf_histogram(arr, g_min=0, g_max=255, q=0.999)
+        print("\nImage enhanced using histogram-based Rayleigh PDF.")
 
         # Calculate and print metrics AFTER enhancement
         print("\nMetrics AFTER enhancement:")
