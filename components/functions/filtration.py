@@ -64,19 +64,15 @@ def optimized_slowpass_filter(arr):
     # Predefined 3x3 low-pass filter mask (average filter)
     low_pass_mask = np.ones((3, 3), dtype=np.float32) / 9
     
-    # If the input image is in color (RGB)
     if arr.ndim == 3:
-        # Convert to grayscale by averaging the channels (if needed)
-        arr = np.mean(arr, axis=2)  # Convert to grayscale
+        arr = np.mean(arr, axis=2)
     
-    # Get the height and width of the image
     height, width = arr.shape
-    result = np.zeros((height - 2, width - 2))  # The result will be smaller by 2 pixels on each side
+    result = np.zeros((height - 2, width - 2))
 
     # Apply the convolution operation without extra padding
     for i in range(height - 2):
         for j in range(width - 2):
-            # Perform the convolution with the low-pass mask
             result[i, j] = (
                 arr[i, j] * low_pass_mask[0, 0] + 
                 arr[i, j + 1] * low_pass_mask[0, 1] + 
@@ -89,10 +85,8 @@ def optimized_slowpass_filter(arr):
                 arr[i + 2, j + 2] * low_pass_mask[2, 2]
             )
     
-    # Clip the result to ensure the values stay within the valid range for an image
     result = np.clip(result, 0, 255)
     
-    # Measure the execution time
     end_time = time.time()
     print(f"optimized_slowpass_filter execution time: {end_time - start_time:.6f} seconds")
     
