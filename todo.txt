@@ -1,8 +1,0 @@
-========= Task 1 todos ===========================
-
-[x] Usage
-[x] Brightness
-[x] Contrast
-[ ] Investigate: why small SNR values
-[ ] Investigate: why MD too big (255)
-[ ] For color images calculate the measures for every channel separately.
