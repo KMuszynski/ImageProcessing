@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image
+import time
 
 def create_mask(n):
 
@@ -38,6 +38,7 @@ def apply_convolution(arr, mask):
 
 
 def universal_filter(arr, param):
+    start_time = time.time()  # Start timing
     
     mask = create_mask(param)
 
@@ -51,22 +52,48 @@ def universal_filter(arr, param):
         # If grayscale
         filtered_image = apply_convolution(arr, mask)
 
+    end_time = time.time()  # End timing
+    print(f"universal_filter execution time: {end_time - start_time:.6f} seconds")
+    
     return filtered_image
 
 
 def optimized_slowpass_filter(arr):
-    # Fixed 3x3 averaging mask
-    mask = np.array([[1, 1, 1],
-                     [1, 1, 1],
-                     [1, 1, 1]], dtype=np.float32) / 9
+    start_time = time.time()
+    
+    # Predefined 3x3 low-pass filter mask (average filter)
+    low_pass_mask = np.ones((3, 3), dtype=np.float32) / 9
+    
+    # If the input image is in color (RGB)
+    if arr.ndim == 3:
+        # Convert to grayscale by averaging the channels (if needed)
+        arr = np.mean(arr, axis=2)  # Convert to grayscale
+    
+    # Get the height and width of the image
+    height, width = arr.shape
+    result = np.zeros((height - 2, width - 2))  # The result will be smaller by 2 pixels on each side
 
-    # If tcolor
-    if arr.ndim == 3 and arr.shape[2] == 3:
-        filtered_image = np.zeros_like(arr)
-        for c in range(3): 
-            filtered_image[:, :, c] = apply_convolution(arr[:, :, c], mask)
-    else:
-        # If grayscale
-        filtered_image = apply_convolution(arr, mask)
-
-    return filtered_image
+    # Apply the convolution operation without extra padding
+    for i in range(height - 2):
+        for j in range(width - 2):
+            # Perform the convolution with the low-pass mask
+            result[i, j] = (
+                arr[i, j] * low_pass_mask[0, 0] + 
+                arr[i, j + 1] * low_pass_mask[0, 1] + 
+                arr[i, j + 2] * low_pass_mask[0, 2] +
+                arr[i + 1, j] * low_pass_mask[1, 0] + 
+                arr[i + 1, j + 1] * low_pass_mask[1, 1] + 
+                arr[i + 1, j + 2] * low_pass_mask[1, 2] +
+                arr[i + 2, j] * low_pass_mask[2, 0] + 
+                arr[i + 2, j + 1] * low_pass_mask[2, 1] + 
+                arr[i + 2, j + 2] * low_pass_mask[2, 2]
+            )
+    
+    # Clip the result to ensure the values stay within the valid range for an image
+    result = np.clip(result, 0, 255)
+    
+    # Measure the execution time
+    end_time = time.time()
+    print(f"optimized_slowpass_filter execution time: {end_time - start_time:.6f} seconds")
+    
+    return result

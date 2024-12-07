@@ -86,7 +86,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/underwater.bmp"
+image_path = "./components/images/noise-color/lenac_uniform3.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
