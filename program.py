@@ -46,16 +46,21 @@ def print_help():
             --histogram <channel>      Calculate and save the histogram for the specified channel 
                                         (options: gray, red, green, blue)
 
+            --rayleigh [g_min] [g_max] Apply Rayleigh enhancement with optional custom g_min and g_max.
+                                       If g_min and g_max are not provided, defaults are 0 and 255.
+
         Examples:
             python3 program.py --brightness 50
             python3 program.py --contrast -20
             python3 program.py --negative
-            python3 program.py --histogram gray        
+            python3 program.py --histogram gray
+            python3 program.py --rayleigh 0 200
     """
     print(help_text)
 
 
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip",'--slowpass', "--rayleigh", "--grayscale-histogram", "--roberts"]
+# Removed '--rayleigh' from noParamFunctions, since we now allow parameters
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip", "--slowpass", "--grayscale-histogram", "--roberts"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -66,20 +71,16 @@ if len(sys.argv) == 1:
 # Store the command from the command line
 command = sys.argv[1]
 
-# Check if there are only two arguments (program.py + command)
-if len(sys.argv) == 2:
-    if command not in noParamFunctions:
-        print("Too few command line parameters given.\n")
-        print_help()
-        sys.exit()
+if command not in noParamFunctions and len(sys.argv) < 3 and command != '--histogram' and command != '--rayleigh':
+    print("Too few command line parameters given.\n")
+    print_help()
+    sys.exit()
 
-# Check if there are more than two arguments
-if len(sys.argv) > 3 and command != '--histogram':
+if command not in ['--histogram', '--rayleigh'] and len(sys.argv) > 3:
     print("Too many command line parameters given.\n")
     print_help()
     sys.exit()
 
-# Store param and metric if present
 param = None
 if len(sys.argv) >= 3:
     param = sys.argv[2]
@@ -95,30 +96,43 @@ arr = np.array(image)
 if command == '--help':
     print_help()
     sys.exit()
+
 elif command == '--brightness':
     result_arr = doBrightness(param, arr)
+
 elif command == '--contrast':
     result_arr = doContrast(param, arr)
+
 elif command == '--negative':
     result_arr = doNegative(arr)
+
 elif command == '--hflip':
     result_arr = doHorizontalFlip(arr)
+
 elif command == '--vflip':
     result_arr = doVerticalFlip(arr)
+
 elif command == '--dflip':
     result_arr = doDiagonalFlip(arr)
+
 elif command == '--shrink':
     result_arr = doShrink(param, arr)
+
 elif command == '--enlarge':
     result_arr = doEnlarge(param, arr)
+
 elif command == '--median':
     result_arr = doMedianFilter(param, arr)
+
 elif command == '--gmean':
     result_arr = doGeometricMeanFilter(param, arr)
+
 elif command == '--slowpass':
     result_arr = optimized_slowpass_filter(arr)
+
 elif command == '--universal':
     result_arr = universal_filter(arr, int(param))
+
 elif command == '--histogram':
     if param not in ["gray", "red", "green", "blue"]:
         print("Invalid channel! Choose from 'gray', 'red', 'green', or 'blue'.")
@@ -127,8 +141,23 @@ elif command == '--histogram':
     calculate_save_histogram(image_path, channel=param, save_path=save_path)
     print(f"Histogram successfully saved as {save_path}!")
     sys.exit()
+
 elif command == '--rayleigh':
     try:
+        # Default values
+        g_min_val = 0
+        g_max_val = 255
+        q_val = 0.999
+
+        # program.py --rayleigh [g_min] [g_max]
+        if len(sys.argv) >= 3:
+            g_min_val = float(sys.argv[2])
+        if len(sys.argv) >= 4:
+            g_max_val = float(sys.argv[3])
+
+        # Compute alpha for printing
+        alpha_val = (g_max_val - g_min_val) / np.sqrt(-2 * np.log(1 - q_val))
+
         # Calculate and print metrics BEFORE enhancement
         print("Metrics BEFORE enhancement:")
         print(f"Mean: {calculate_mean(arr):.2f}")
@@ -140,8 +169,15 @@ elif command == '--rayleigh':
         print(f"Variation Coefficient II: {calculate_variation_coefficient_ii(arr):.2f}")
         print(f"Entropy: {calculate_entropy(arr):.2f}")
 
-        # Apply Rayleigh enhancement with default g_min, g_max, q
-        result_arr = apply_rayleigh_pdf_histogram(arr, g_min=0, g_max=255, q=0.999)
+        # Print chosen parameters and alpha
+        print(f"\nApplying Rayleigh enhancement with:")
+        print(f"  g_min = {g_min_val}")
+        print(f"  g_max = {g_max_val}")
+        print(f"  q = {q_val}")
+        print(f"  Computed alpha = {alpha_val:.2f}")
+
+        # Apply Rayleigh enhancement
+        result_arr = apply_rayleigh_pdf_histogram(arr, g_min=g_min_val, g_max=g_max_val, q=q_val)
         print("\nImage enhanced using histogram-based Rayleigh PDF.")
 
         # Calculate and print metrics AFTER enhancement
@@ -154,16 +190,15 @@ elif command == '--rayleigh':
         print(f"Flattening Coefficient: {calculate_flattening_coefficient(result_arr):.2f}")
         print(f"Variation Coefficient II: {calculate_variation_coefficient_ii(result_arr):.2f}")
         print(f"Entropy: {calculate_entropy(result_arr):.2f}")
+
     except Exception as e:
         print(f"Error during Rayleigh enhancement: {e}")
         sys.exit()
+
 elif command == '--grayscale-histogram':
     try:
-        # Convert the image to grayscale and return the pixel values
         grayscale_image = image.convert("L")
         result_arr = np.array(grayscale_image)
-
-        # Calculate and display histogram
         histogram = calculate_manual_histogram(result_arr)
         plt.bar(range(256), histogram, color='gray', width=1.0)
         plt.title("Grayscale Histogram")
@@ -175,6 +210,7 @@ elif command == '--grayscale-histogram':
     except Exception as e:
         print(f"Error calculating grayscale histogram: {e}")
         sys.exit()
+
 elif command == '--oll':
     # Get the alpha parameter, default is 1.0
     alpha = float(param) if param else 1.0
