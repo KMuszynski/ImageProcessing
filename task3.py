@@ -44,9 +44,6 @@ def erosion(B, arr):
     return new_arr.astype(np.uint8)
 
 
-import numpy as np
-
-
 def opening(B, arr, threshold=127):
     """
     Perform opening operation (erosion followed by dilation) on a binary image.

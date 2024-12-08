@@ -1,0 +1,1 @@
+This is an alternative implementation to the task3.
