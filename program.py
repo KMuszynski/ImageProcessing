@@ -101,7 +101,7 @@ if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
 arr = np.array(image)
 
-B = get_structuring_element(param)
+# B = get_structuring_element(param)
 
 # Apply the command
 if command == '--help':
