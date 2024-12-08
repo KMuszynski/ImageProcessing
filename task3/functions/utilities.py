@@ -8,7 +8,7 @@ def to_binary(arr, threshold=127):
     return (arr > threshold).astype(np.uint8)
 
 
-def pad_image(image, B):
+def pad_image(img_arr, B):
     """
     Pad the image based on the size of the structuring element B.
     B should be a binary array (0/1).
@@ -16,7 +16,7 @@ def pad_image(image, B):
     # Compute needed padding
     p = B.shape[0] // 2
     q = B.shape[1] // 2
-    return np.pad(image, ((p, p), (q, q)), mode='constant', constant_values=0), p, q
+    return np.pad(img_arr, ((p, p), (q, q)), mode='constant', constant_values=0), p, q
 
 
 def get_subregion(padded_img, i, j, B):
