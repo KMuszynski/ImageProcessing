@@ -211,7 +211,7 @@ def get_neighborhood(arr, x, y, B):
 
 def print_help():
     help_text = """
-        Usage: python3 program.py [command] [param]
+        Usage: python3 task3.py [command] [param]
 
         Commands:
             --help                     Show this help message
@@ -224,12 +224,12 @@ def print_help():
             --iterative <param> <p>    Apply iterative morphological operation with the specified param and point p
             
         Examples:
-            python3 program.py --dilation 3
-            python3 program.py --erosion 3
-            python3 program.py --opening 3
-            python3 program.py --closing 3
-            python3 program.py --hmt 3
-            python3 program.py --iterative 3 10,10
+            python3 task3.py --dilation 3
+            python3 task3.py --erosion 3
+            python3 task3.py --opening 3
+            python3 task3.py --closing 3
+            python3 task3.py --hmt 3
+            python3 task3.py --iterative 3 10,10
     """
     print(help_text)
 
