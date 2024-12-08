@@ -21,15 +21,15 @@ from components.functions.statistic import (
     calculate_variation_coefficient_ii,
     calculate_entropy,
 )
-from morphological import (
-    dilation,
-    erosion,
-    opening,
-    closing,
-    hmt_transformation,
-    iterative_morphological_operation,
-    get_structuring_element
-)
+# from morphological import (
+#     dilation,
+#     erosion,
+#     opening,
+#     closing,
+#     hmt_transformation,
+#     iterative_morphological_operation,
+#     get_structuring_element
+# )
 
 
 def print_help():
@@ -144,22 +144,27 @@ elif command == '--slowpass':
 elif command == '--universal':
     result_arr = universal_filter(arr, int(param))
 
-# Morfological
+# Morphological
 # Apply the command
 elif command == '--dilation':
     result_arr = dilation(B, arr)
+
 elif command == '--erosion':
     result_arr = erosion(B, arr)
+
 elif command == '--opening':
     result_arr = opening(B, arr)
+
 elif command == '--closing':
     result_arr = closing(B, arr)
+
 elif command == '--htm':
     result_arr = hmt_transformation(B, arr)
+
 elif command == '--morphological':
     p = (int(sys.argv[3]), int(sys.argv[4]))  # Starting point for iterative morphological operation
     result_arr = iterative_morphological_operation(B, arr, p)
-# Morfological /
+# Morphological /
 
 elif command == '--histogram':
     if param not in ["gray", "red", "green", "blue"]:

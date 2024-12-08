@@ -2,6 +2,7 @@ import numpy as np
 from PIL import Image
 import sys
 
+
 def dilation(B, arr, threshold=127):
     """
     Perform dilation on a binary image using a structuring element B.
@@ -21,12 +22,11 @@ def dilation(B, arr, threshold=127):
     # Perform dilation
     for i in range(P // 2, arr.shape[0] - P // 2):
         for j in range(Q // 2, arr.shape[1] - Q // 2):
-            region = binary_image[i - P // 2 : i + P // 2 + 1, j - Q // 2 : j + Q // 2 + 1]
+            region = binary_image[i - P // 2: i + P // 2 + 1, j - Q // 2: j + Q // 2 + 1]
             if np.any(region[B == 1]):  # Check if any pixel in the region is 1 where B is 1
                 In[i, j] = 1  # Set the output pixel to 1 if dilation condition met
-    
-    return In
 
+    return In
 
 
 def erosion(B, arr):
@@ -34,17 +34,18 @@ def erosion(B, arr):
     arr = convert_to_grayscale_and_binary(arr)
     rows, cols = arr.shape
     new_arr = np.ones_like(arr)
-    
+
     for x in range(rows):
         for y in range(cols):
             neighborhood = get_neighborhood(arr, x, y, B)
             if not all(arr[nx, ny] == 1 for nx, ny in neighborhood):
                 new_arr[x, y] = 0
-    
+
     return new_arr.astype(np.uint8)
 
 
 import numpy as np
+
 
 def opening(B, arr, threshold=127):
     """
@@ -65,22 +66,22 @@ def opening(B, arr, threshold=127):
     P, Q = B.shape  # Structuring element size
     eroded = np.zeros_like(binary_image)
     padded_image = np.pad(binary_image, ((P // 2, P // 2), (Q // 2, Q // 2)), mode='constant', constant_values=0)
-    
+
     # Perform erosion
     for i in range(P // 2, padded_image.shape[0] - P // 2):
         for j in range(Q // 2, padded_image.shape[1] - Q // 2):
-            region = padded_image[i - P // 2 : i + P // 2 + 1, j - Q // 2 : j + Q // 2 + 1]
+            region = padded_image[i - P // 2: i + P // 2 + 1, j - Q // 2: j + Q // 2 + 1]
             if np.all(region[B == 1] == 1):  # Check if region matches the structuring element
                 eroded[i - P // 2, j - Q // 2] = 1
 
     # Dilation: For each pixel, check if the neighborhood fits the structuring element.
     dilated = np.zeros_like(eroded)
     padded_eroded = np.pad(eroded, ((P // 2, P // 2), (Q // 2, Q // 2)), mode='constant', constant_values=0)
-    
+
     # Perform dilation
     for i in range(P // 2, padded_eroded.shape[0] - P // 2):
         for j in range(Q // 2, padded_eroded.shape[1] - Q // 2):
-            region = padded_eroded[i - P // 2 : i + P // 2 + 1, j - Q // 2 : j + Q // 2 + 1]
+            region = padded_eroded[i - P // 2: i + P // 2 + 1, j - Q // 2: j + Q // 2 + 1]
             if np.any(region[B == 1] == 1):  # If any pixel in the region matches the structuring element
                 dilated[i - P // 2, j - Q // 2] = 1
 
@@ -106,22 +107,22 @@ def closing(B, arr, threshold=127):
     P, Q = B.shape  # Structuring element size
     dilated = np.zeros_like(binary_image)
     padded_image = np.pad(binary_image, ((P // 2, P // 2), (Q // 2, Q // 2)), mode='constant', constant_values=0)
-    
+
     # Perform dilation
     for i in range(P // 2, padded_image.shape[0] - P // 2):
         for j in range(Q // 2, padded_image.shape[1] - Q // 2):
-            region = padded_image[i - P // 2 : i + P // 2 + 1, j - Q // 2 : j + Q // 2 + 1]
+            region = padded_image[i - P // 2: i + P // 2 + 1, j - Q // 2: j + Q // 2 + 1]
             if np.any(region[B == 1] == 1):  # If any pixel in the region matches the structuring element
                 dilated[i - P // 2, j - Q // 2] = 1
 
     # Erosion: For each pixel, check if the neighborhood fits the structuring element.
     eroded = np.zeros_like(dilated)
     padded_dilated = np.pad(dilated, ((P // 2, P // 2), (Q // 2, Q // 2)), mode='constant', constant_values=0)
-    
+
     # Perform erosion
     for i in range(P // 2, padded_dilated.shape[0] - P // 2):
         for j in range(Q // 2, padded_dilated.shape[1] - Q // 2):
-            region = padded_dilated[i - P // 2 : i + P // 2 + 1, j - Q // 2 : j + Q // 2 + 1]
+            region = padded_dilated[i - P // 2: i + P // 2 + 1, j - Q // 2: j + Q // 2 + 1]
             if np.all(region[B == 1] == 1):  # Check if region matches the structuring element
                 eroded[i - P // 2, j - Q // 2] = 1
 
@@ -133,13 +134,13 @@ def hmt_transformation(B, arr):
     arr = convert_to_grayscale_and_binary(arr)
     rows, cols = arr.shape
     new_arr = np.zeros_like(arr)
-    
+
     for x in range(rows):
         for y in range(cols):
             neighborhood = get_neighborhood(arr, x, y, B)
             if all(arr[nx, ny] == 1 for nx, ny in neighborhood):
                 new_arr[x, y] = 1
-    
+
     return new_arr.astype(np.uint8)
 
 
@@ -158,34 +159,32 @@ def iterative_morphological_operation(B, arr, p, threshold=127):
     """
     binary_image = np.where(arr > threshold, 1, 0)  # Convert to binary
     P, Q = B.shape  # Structuring element size
-    
+
     # Initialize X0 with the starting point p
     Xk = np.zeros_like(binary_image)
     Xk[p[0], p[1]] = 1  # Set the point p in X0
-    
+
     while True:
         # Dilate Xk-1
         padded_Xk = np.pad(Xk, ((P // 2, P // 2), (Q // 2, Q // 2)), mode='constant', constant_values=0)
         dilated = np.zeros_like(Xk)
-        
+
         for i in range(P // 2, padded_Xk.shape[0] - P // 2):
             for j in range(Q // 2, padded_Xk.shape[1] - Q // 2):
-                region = padded_Xk[i - P // 2 : i + P // 2 + 1, j - Q // 2 : j + Q // 2 + 1]
+                region = padded_Xk[i - P // 2: i + P // 2 + 1, j - Q // 2: j + Q // 2 + 1]
                 if np.any(region[B == 1] == 1):  # If any pixel in the region matches the structuring element
                     dilated[i - P // 2, j - Q // 2] = 1
-        
+
         # Compute the intersection with A
         Xk_new = np.logical_and(dilated, binary_image).astype(int)
-        
+
         # Check for convergence
         if np.array_equal(Xk, Xk_new):
             break
-        
+
         Xk = Xk_new  # Update for the next iteration
-    
+
     return Xk
-
-
 
 
 def convert_to_grayscale_and_binary(arr, threshold=127):
@@ -198,7 +197,7 @@ def get_neighborhood(arr, x, y, B):
     rows, cols = arr.shape
     neighborhood = []
     B_rows, B_cols = B.shape
-    
+
     for i in range(B_rows):
         for j in range(B_cols):
             nx = x + i - B_rows // 2
@@ -206,7 +205,7 @@ def get_neighborhood(arr, x, y, B):
             if 0 <= nx < rows and 0 <= ny < cols:
                 if B[i, j] == 1:
                     neighborhood.append((nx, ny))
-    
+
     return neighborhood
 
 

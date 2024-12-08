@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "numpy": "^0.0.1",
-    "pillow": "^0.0.9",
-    "scripy": "^0.3.0"
-  }
-}
