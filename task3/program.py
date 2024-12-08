@@ -45,6 +45,10 @@ image = Image.open(image_path).convert("L")
 arr = np.array(image)
 arr = to_binary(arr)
 
+binary_im = Image.fromarray((arr * 255).astype(np.uint8))
+binary_im.save("task3/results/binary.bmp")
+print("Binary image saved as 'binary.bmp'.")
+
 
 def create_B2_from_B1(B1):
     """
@@ -178,5 +182,5 @@ else:
 
 # Save the result
 new_im = Image.fromarray((result_arr * 255).astype(np.uint8))
-new_im.save("result.bmp")
+new_im.save("task3/results/result.bmp")
 print("Result saved as 'result.bmp'.")
