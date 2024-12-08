@@ -52,14 +52,15 @@ print("Binary image saved as 'binary.bmp'.")
 
 def create_B2_from_B1(B1):
     """
-    Given B1 with:
-    - 1 for dark gray (foreground constraint)
-    - 0 for white or inactive
-    B2 is produced as the complement where:
-    - If B1 = 1, B2 = 0
-    - If B1 = 0, B2 = 1
+    Convert B1 to B2:
+    - B1=1 => B2=0
+    - B1=0 => B2=1
+    - B1=2 => B2=2 (inactive stays inactive)
     """
-    B2 = np.where(B1 == 1, 0, 1)
+    B2 = B1.copy()
+    B2[B1 == 1] = 0
+    B2[B1 == 0] = 1
+    # B1==2 remain 2 (inactive)
     return B2
 
 
@@ -82,7 +83,7 @@ def m4_operation(A, B_sets, max_iterations=1000):
             X_new = np.bitwise_or(hmt_res, A)
 
             # Debug
-            # print("Iteration:", iteration_count, "sum(X_new):", np.sum(X_new), " sum(X_old):", np.sum(X_old))
+            print("Iteration:", iteration_count, "sum(X_new):", np.sum(X_new), " sum(X_old):", np.sum(X_old))
 
             if np.array_equal(X_new, X_old):
                 # Converged
@@ -137,30 +138,30 @@ elif command in ['--dilation', '--erosion', '--opening', '--closing', '--hmt']:
 
 elif command == '--m4':
     B1_1 = np.array([
-        [1, 0, 0],
-        [1, 0, 0],
-        [1, 0, 0]
+        [0, 0, 0],
+        [2, 1, 2],
+        [1, 1, 1]
     ], dtype=int)
     B2_1 = create_B2_from_B1(B1_1)
 
     B1_2 = np.array([
-        [1, 1, 1],
-        [0, 0, 0],
-        [0, 0, 0]
+        [2, 0, 0],
+        [1, 1, 0],
+        [1, 1, 2]
     ], dtype=int)
     B2_2 = create_B2_from_B1(B1_2)
 
     B1_3 = np.array([
-        [0, 0, 1],
-        [0, 0, 1],
-        [0, 0, 1]
+        [1, 2, 0],
+        [1, 1, 0],
+        [1, 2, 0]
     ], dtype=int)
     B2_3 = create_B2_from_B1(B1_3)
 
     B1_4 = np.array([
-        [0, 0, 0],
-        [0, 0, 0],
-        [1, 1, 1]
+        [1, 1, 2],
+        [1, 1, 0],
+        [2, 0, 0]
     ], dtype=int)
     B2_4 = create_B2_from_B1(B1_4)
 
