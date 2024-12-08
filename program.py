@@ -95,7 +95,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/lena.bmp"
+image_path = "./components/images/mandrilbw.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
@@ -144,27 +144,27 @@ elif command == '--slowpass':
 elif command == '--universal':
     result_arr = universal_filter(arr, int(param))
 
-# Morphological
-# Apply the command
-elif command == '--dilation':
-    result_arr = dilation(B, arr)
-
-elif command == '--erosion':
-    result_arr = erosion(B, arr)
-
-elif command == '--opening':
-    result_arr = opening(B, arr)
-
-elif command == '--closing':
-    result_arr = closing(B, arr)
-
-elif command == '--htm':
-    result_arr = hmt_transformation(B, arr)
-
-elif command == '--morphological':
-    p = (int(sys.argv[3]), int(sys.argv[4]))  # Starting point for iterative morphological operation
-    result_arr = iterative_morphological_operation(B, arr, p)
-# Morphological /
+# # Morphological
+# # Apply the command
+# elif command == '--dilation':
+#     result_arr = dilation(B, arr)
+#
+# elif command == '--erosion':
+#     result_arr = erosion(B, arr)
+#
+# elif command == '--opening':
+#     result_arr = opening(B, arr)
+#
+# elif command == '--closing':
+#     result_arr = closing(B, arr)
+#
+# elif command == '--htm':
+#     result_arr = hmt_transformation(B, arr)
+#
+# elif command == '--morphological':
+#     p = (int(sys.argv[3]), int(sys.argv[4]))  # Starting point for iterative morphological operation
+#     result_arr = iterative_morphological_operation(B, arr, p)
+# # Morphological /
 
 elif command == '--histogram':
     if param not in ["gray", "red", "green", "blue"]:

@@ -40,7 +40,7 @@ if len(sys.argv) < 2:
 command = sys.argv[1]
 
 # Load the image
-image_path = "./components/images/g_lena_small.bmp"
+image_path = "./task3/images/b_mandrill.bmp"
 image = Image.open(image_path).convert("L")
 arr = np.array(image)
 arr = to_binary(arr)
@@ -81,7 +81,7 @@ def m4_operation(A, B_sets, max_iterations=1000):
             hmt_res = hit_or_miss(X_old, B1_i, B2_i)
             X_new = np.bitwise_or(hmt_res, A)
 
-            # Debug prints to see progress
+            # Debug
             # print("Iteration:", iteration_count, "sum(X_new):", np.sum(X_new), " sum(X_old):", np.sum(X_old))
 
             if np.array_equal(X_new, X_old):
@@ -136,8 +136,6 @@ elif command in ['--dilation', '--erosion', '--opening', '--closing', '--hmt']:
         result_arr = hit_or_miss(arr, B1, B2)
 
 elif command == '--m4':
-    # Define the four sets (B1_i, B2_i) based on (xi) or suitable pattern.
-    # You may need to adjust these sets depending on your task requirements.
     B1_1 = np.array([
         [1, 0, 0],
         [1, 0, 0],
