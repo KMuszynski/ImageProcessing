@@ -21,6 +21,15 @@ from components.functions.statistic import (
     calculate_variation_coefficient_ii,
     calculate_entropy,
 )
+from morphological import (
+    dilation,
+    erosion,
+    opening,
+    closing,
+    hmt_transformation,
+    iterative_morphological_operation,
+    get_structuring_element
+)
 
 
 def print_help():
@@ -86,11 +95,13 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/noise-color/lenac_uniform3.bmp"
+image_path = "./components/images/lena.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
 arr = np.array(image)
+
+B = get_structuring_element(param)
 
 # Apply the command
 if command == '--help':
@@ -132,6 +143,23 @@ elif command == '--slowpass':
 
 elif command == '--universal':
     result_arr = universal_filter(arr, int(param))
+
+# Morfological
+# Apply the command
+elif command == '--dilation':
+    result_arr = dilation(B, arr)
+elif command == '--erosion':
+    result_arr = erosion(B, arr)
+elif command == '--opening':
+    result_arr = opening(B, arr)
+elif command == '--closing':
+    result_arr = closing(B, arr)
+elif command == '--htm':
+    result_arr = hmt_transformation(B, arr)
+elif command == '--morphological':
+    p = (int(sys.argv[3]), int(sys.argv[4]))  # Starting point for iterative morphological operation
+    result_arr = iterative_morphological_operation(B, arr, p)
+# Morfological /
 
 elif command == '--histogram':
     if param not in ["gray", "red", "green", "blue"]:
