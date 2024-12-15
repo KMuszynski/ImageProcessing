@@ -61,33 +61,53 @@ def universal_filter(arr, param):
 def optimized_slowpass_filter(arr):
     start_time = time.time()
     
-    # Predefined 3x3 low-pass filter mask (average filter)
+    # Predefined 3x3 low-pass filter mask
     low_pass_mask = np.ones((3, 3), dtype=np.float32) / 9
-    
-    if arr.ndim == 3:
-        arr = np.mean(arr, axis=2)
-    
-    height, width = arr.shape
-    result = np.zeros((height - 2, width - 2))
+    pad_height, pad_width = 1, 1  # Padding for a 3x3 mask
 
-    # Apply the convolution operation without extra padding
-    for i in range(height - 2):
-        for j in range(width - 2):
-            result[i, j] = (
-                arr[i, j] * low_pass_mask[0, 0] + 
-                arr[i, j + 1] * low_pass_mask[0, 1] + 
-                arr[i, j + 2] * low_pass_mask[0, 2] +
-                arr[i + 1, j] * low_pass_mask[1, 0] + 
-                arr[i + 1, j + 1] * low_pass_mask[1, 1] + 
-                arr[i + 1, j + 2] * low_pass_mask[1, 2] +
-                arr[i + 2, j] * low_pass_mask[2, 0] + 
-                arr[i + 2, j + 1] * low_pass_mask[2, 1] + 
-                arr[i + 2, j + 2] * low_pass_mask[2, 2]
-            )
-    
-    result = np.clip(result, 0, 255)
-    
+    # Add edge padding
+    if arr.ndim == 3:  # Color image
+        height, width, _ = arr.shape
+        padded_image = np.pad(arr, ((pad_height, pad_height), (pad_width, pad_width), (0, 0)), mode='edge')
+        filtered_image = np.zeros_like(arr, dtype=np.float32)
+        for c in range(3):  # Process each channel
+            filtered_image[:, :, c] = apply_optimized_convolution(padded_image[:, :, c], low_pass_mask)
+    else:  # Grayscale image
+        height, width = arr.shape
+        padded_image = np.pad(arr, ((pad_height, pad_height), (pad_width, pad_width)), mode='edge')
+        filtered_image = apply_optimized_convolution(padded_image, low_pass_mask)
+
+    # Clip the values to valid range
+    filtered_image = np.clip(filtered_image, 0, 255)
+
     end_time = time.time()
     print(f"optimized_slowpass_filter execution time: {end_time - start_time:.6f} seconds")
-    
+    return filtered_image.astype(np.uint8)
+
+def apply_optimized_convolution(arr, mask):
+    mask_height, mask_width = mask.shape
+    height, width = arr.shape
+    result = np.zeros((height - mask_height + 1, width - mask_width + 1), dtype=np.float32)
+
+    # Cache the row sums
+    row_sums = np.zeros((height - mask_height + 1, width), dtype=np.float32)
+
+    # Precompute row-wise sums for the 3x3 filter
+    for i in range(height - 2):  # Traverse rows
+        for j in range(width):  # Traverse columns
+            row_sums[i, j] = (
+                arr[i, j] * mask[0, 0] +
+                arr[i + 1, j] * mask[1, 0] +
+                arr[i + 2, j] * mask[2, 0]
+            )
+
+    # Compute the result using row_sums
+    for i in range(height - mask_height + 1):  # Traverse rows
+        for j in range(width - mask_width + 1):  # Traverse columns
+            result[i, j] = (
+                row_sums[i, j] +
+                row_sums[i, j + 1] +
+                row_sums[i, j + 2]
+            )
+
     return result

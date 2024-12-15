@@ -205,6 +205,98 @@ def get_neighborhood(arr, x, y, B):
 
     return neighborhood
 
+def region_growing(arr, seed, threshold=10, region_value=1, connectivity=8):
+    """
+    Perform region growing segmentation on the image starting from a seed point.
+
+    Parameters:
+    - arr: Input grayscale or binary image (as a numpy array).
+    - seed: Starting point for region growing (x, y).
+    - threshold: Intensity difference threshold for adding neighboring pixels to the region (default is 10).
+    - region_value: Value assigned to the segmented region (default is 1).
+    - connectivity: Type of neighborhood connectivity (4-connected or 8-connected).
+
+    Returns:
+    - Segmented binary image with the region grown around the seed.
+    """
+    rows, cols = arr.shape
+    segmented = np.zeros_like(arr)
+
+    # Initialize a list for pixels to process (queue for BFS-like region growing)
+    to_process = [seed]
+    segmented[seed] = region_value
+
+    while to_process:
+        x, y = to_process.pop()
+
+        # Check neighbors based on connectivity (4 or 8-connected)
+        neighbors = get_neighbors(x, y, rows, cols, connectivity)
+        
+        for nx, ny in neighbors:
+            if segmented[nx, ny] == 0:  # If not already in the region
+                # Check if the intensity difference is below the threshold
+                if abs(int(arr[x, y]) - int(arr[nx, ny])) <= threshold:
+                    segmented[nx, ny] = region_value
+                    to_process.append((nx, ny))
+
+    return segmented.astype(np.uint8)
+
+def get_neighbors(x, y, rows, cols, connectivity=8):
+    """
+    Get the neighboring pixels of (x, y) based on specified connectivity.
+
+    Parameters:
+    - x: The x-coordinate of the pixel.
+    - y: The y-coordinate of the pixel.
+    - rows: Number of rows in the image.
+    - cols: Number of columns in the image.
+    - connectivity: 4 or 8 connectivity (4-connected or 8-connected).
+
+    Returns:
+    - List of valid neighboring coordinates.
+    """
+    neighbors = []
+    if connectivity == 8:  # 8-connected neighbors
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+    else:  # 4-connected neighbors
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < rows and 0 <= ny < cols:
+            neighbors.append((nx, ny))
+    
+    return neighbors
+
+def merge_regions(segmented_img, threshold=10):
+    """
+    Merge adjacent regions that meet the similarity criterion.
+
+    Parameters:
+    - segmented_img: The segmented binary image.
+    - threshold: Intensity difference threshold for merging regions.
+
+    Returns:
+    - Segmented image after region merging.
+    """
+    rows, cols = segmented_img.shape
+    merged_img = segmented_img.copy()
+    region_labels = np.unique(segmented_img)
+
+    # Compare each pair of regions and merge if the difference is below threshold
+    for i in range(rows):
+        for j in range(cols):
+            current_region = segmented_img[i, j]
+            for nx, ny in get_neighbors(i, j, rows, cols, connectivity=8):
+                neighbor_region = segmented_img[nx, ny]
+                if current_region != 0 and neighbor_region != 0 and current_region != neighbor_region:
+                    # Merge regions if their intensity difference is below the threshold
+                    if abs(int(merged_img[i, j]) - int(merged_img[nx, ny])) <= threshold:
+                        merged_img[nx, ny] = current_region
+    
+    return merged_img.astype(np.uint8)
+
+
 
 def print_help():
     help_text = """
@@ -240,8 +332,8 @@ command = sys.argv[1]
 param = sys.argv[2]
 
 # Load the image
-#image_path = "./components/images/lenac.bmp"
-image_path = "./components/images/g_lena_small.bmp"
+image_path = "./components/images/lenac.bmp"
+#image_path = "./components/images/g_lena_small.bmp"
 
 image = Image.open(image_path)
 image = image.convert("L")
@@ -264,6 +356,12 @@ elif command == '--hmt':
 elif command == '--iterative':
     p = tuple(map(int, sys.argv[3].split(',')))
     result_arr = iterative_morphological_operation(np.ones((int(param), int(param)), dtype=int), arr, p)
+elif command == '--region_growing':
+    threshold = int(param)  # Use the provided threshold for growing
+    seed_str = sys.argv[3]  # Seed point is the next argument
+    seed = tuple(map(int, seed_str.split(',')))  # Convert seed to a tuple (x, y)
+    result_arr = region_growing(arr, seed, threshold)
+
 else:
     print(f"Unknown command: {command}")
     print_help()
