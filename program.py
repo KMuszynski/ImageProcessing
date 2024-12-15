@@ -10,7 +10,7 @@ from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_save_histogram, calculate_manual_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf_histogram
-from components.functions.laplacian import ll_operator, apply_roberts
+from components.functions.lloperator import ll_operator
 from components.functions.statistic import (
     calculate_mean,
     calculate_variance,
@@ -69,7 +69,7 @@ def print_help():
 
 
 # Removed '--rayleigh' from noParamFunctions, since we now allow parameters
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip", "--slowpass", "--grayscale-histogram", "--roberts"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip", "--slowpass", "--grayscale-histogram", "--oll"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -245,17 +245,7 @@ elif command == '--grayscale-histogram':
         sys.exit()
 
 elif command == '--oll':
-    # Get the alpha parameter, default is 1.0
-    alpha = float(param) if param else 1.0
-    result_arr = ll_operator(arr, alpha)
-
-elif command == '--roberts':
-    try:
-        result_arr = apply_roberts(arr)
-        print("Roberts operator applied.")
-    except Exception as e:
-        print(f"Error applying Roberts operator: {e}")
-        sys.exit()
+    result_arr = ll_operator(arr)
 
 else:
     print("Unknown command: " + command)
