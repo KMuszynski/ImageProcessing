@@ -95,7 +95,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/rayleigh_proper_result.png"
+image_path = "./task3/images/girlbw.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")

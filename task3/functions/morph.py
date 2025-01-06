@@ -88,7 +88,7 @@ def hit_or_miss(A, B1, B2):
 
 def erosion_custom(A, B):
     """
-    Perform erosion on binary image A with a 3-value structuring element B. Helper method for m4_operation (handling
+    Perform erosion on binary image A with a 3-value structuring element B. Helper method for m4_operation and hit_or_miss (handling
     inactive pixels).
     Values in B:
     1 -> require A=1 at that position
