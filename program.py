@@ -10,7 +10,7 @@ from components.functions.noise import doMedianFilter, doGeometricMeanFilter
 from components.functions.histogram import calculate_save_histogram, calculate_manual_histogram
 from components.functions.filtration import universal_filter, optimized_slowpass_filter
 from components.functions.rayleigh import apply_rayleigh_pdf_histogram
-from components.functions.laplacian import ll_operator, apply_roberts
+from components.functions.lloperator import ll_operator
 from components.functions.statistic import (
     calculate_mean,
     calculate_variance,
@@ -70,7 +70,7 @@ def print_help():
 
 
 # Removed '--rayleigh' from noParamFunctions, since we now allow parameters
-noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip", "--slowpass", "--grayscale-histogram", "--roberts"]
+noParamFunctions = ["--negative", "--help", "--hflip", "--vflip", "--dflip", "--slowpass", "--grayscale-histogram", "--oll"]
 
 # Check if no command line parameters were given
 if len(sys.argv) == 1:
@@ -96,9 +96,13 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
+<<<<<<< HEAD
 #image_path = "./components/images/c_lenac_small.bmp"
 image_path = "./components/images/fourier/vertical-stripes.bmp"
 #image_path = "./components/images/g_lena_small.bmp"
+=======
+image_path = "./task3/images/girlbw.bmp"
+>>>>>>> 9cbafedee58a2483a5a8892b6cded369cbcce646
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
@@ -254,17 +258,7 @@ elif command == '--grayscale-histogram':
         sys.exit()
 
 elif command == '--oll':
-    # Get the alpha parameter, default is 1.0
-    alpha = float(param) if param else 1.0
-    result_arr = ll_operator(arr, alpha)
-
-elif command == '--roberts':
-    try:
-        result_arr = apply_roberts(arr)
-        print("Roberts operator applied.")
-    except Exception as e:
-        print(f"Error applying Roberts operator: {e}")
-        sys.exit()
+    result_arr = ll_operator(arr)
 
 else:
     print("Unknown command: " + command)
