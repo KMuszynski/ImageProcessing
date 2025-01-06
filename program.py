@@ -21,6 +21,7 @@ from components.functions.statistic import (
     calculate_variation_coefficient_ii,
     calculate_entropy,
 )
+from components.functions.fourier import apply_fourier_transform, apply_inverse_fourier_transform
 # from morphological import (
 #     dilation,
 #     erosion,
@@ -95,7 +96,9 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-image_path = "./components/images/lenac.bmp"
+#image_path = "./components/images/c_lenac_small.bmp"
+image_path = "./components/images/fourier/vertical-stripes.bmp"
+#image_path = "./components/images/g_lena_small.bmp"
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")
@@ -143,6 +146,12 @@ elif command == '--slowpass':
 
 elif command == '--universal':
     result_arr = universal_filter(arr, int(param))
+
+elif command == '--fourierdirect':
+    result_arr = apply_fourier_transform(arr)
+
+elif command == '--fourierinverse':
+    result_arr = apply_inverse_fourier_transform(arr)
 
 # # Morphological
 # # Apply the command
