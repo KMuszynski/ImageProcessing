@@ -40,7 +40,7 @@ if len(sys.argv) < 2:
 command = sys.argv[1]
 
 # Load the image
-image_path = "./task3/images/girl_small.bmp"
+image_path = "./task3/binary_image.bmp"
 image = Image.open(image_path).convert("L")
 arr = np.array(image)
 arr = to_binary(arr)
@@ -63,36 +63,37 @@ def create_B2_from_B1(B1):
     # B1==2 remain 2 (inactive)
     return B2
 
-
-def m4_operation_binary(A, B_sets, max_iterations=1000):
+def m4_operation_hmt(A, B1_list, max_iterations=1000):
     """
-    For each binary structuring element B_i in B_sets:
-      1. Let X_{i,0} = A
-      2. Repeat:
-           X_{i,k} = (X_{i,k-1} dilated by B_i) UNION A
-         until X_{i,k} == X_{i,k-1} (convergence or max_iterations)
-      3. D_i = stable X_{i,k}
+    For each 3-value structuring element B1_i in B1_list:
+      - Create B2_i from B1_i
+      - Let X_{i,0} = A
+      - Repeat:
+           X_{i,k} = hit_or_miss(X_{i,k-1}, B1_i, B2_i)  UNION A
+        until X_{i,k} == X_{i,k-1} or max_iterations
+      - Let D_i = stable X_{i,k}
     Then H(A) = D_1 ∪ D_2 ∪ ... ∪ D_n
     """
-    # Initialize overall result to all zeros
     H = np.zeros_like(A, dtype=np.uint8)
 
-    for B_i in B_sets:
-        # Start each iteration from the original image
+    for idx, B1_i in enumerate(B1_list, start=1):
+        # Build B2_i
+        B2_i = create_B2_from_B1(B1_i)
+
         X_old = A.copy()
         iteration_count = 0
 
         while True:
-            # Standard dilation of X_old
-            dilated = dilation(X_old, B_i)
+            # Perform hit-or-miss on X_old
+            hmt_res = hit_or_miss(X_old, B1_i, B2_i)
 
             # Union with A
-            X_new = np.logical_or(dilated, A).astype(np.uint8)
+            X_new = np.logical_or(hmt_res, A).astype(np.uint8)
 
-            print("Iteration", iteration_count, "Foreground count:", np.sum(X_new)) # Debug
+            print(f"[M4-HMT] SE {idx}, Iteration {iteration_count}, Foreground:", np.sum(X_new))
 
+            # Check convergence
             if np.array_equal(X_new, X_old):
-                # Convergence
                 break
 
             X_old = X_new
@@ -101,7 +102,7 @@ def m4_operation_binary(A, B_sets, max_iterations=1000):
                 print("Warning: Reached max_iterations without convergence.")
                 break
 
-        # Union final stable version D_i into H(A)
+        # Union stable result with H
         H = np.logical_or(H, X_old).astype(np.uint8)
 
     return H
@@ -144,56 +145,37 @@ elif command in ['--dilation', '--erosion', '--opening', '--closing', '--hmt']:
         result_arr = hit_or_miss(arr, B1, B2)
 
 elif command == '--m4':
-    # B1 = np.array([
-    #     [0, 0, 0],
-    #     [0, 0, 0],
-    #     [0, 0, 1]
-    # ], dtype=int)
-    #
-    # B2 = np.array([
-    #     [0, 0, 0],
-    #     [0, 0, 0],
-    #     [1, 1, 0]
-    # ], dtype=int)
-    #
-    # B3 = np.array([
-    #     [0, 0, 0],
-    #     [0, 0, 0],
-    #     [0, 1, 0]
-    # ], dtype=int)
-    #
-    # B4 = np.array([
-    #     [0, 0, 0],
-    #     [0, 0, 0],
-    #     [0, 1, 1]
-    # ], dtype=int)
-
-    B1 = np.array([
-        [0, 0, 0],
-        [0, 1, 1],
-        [0, 0, 0]
+    B1_1 = np.array([
+        [1, 2, 2],
+        [1, 0, 2],
+        [1, 2, 2]
     ], dtype=int)
 
-    B2 = np.array([
-        [0, 0, 0],
-        [0, 1, 0],
-        [0, 1, 0]
-    ], dtype=int)
-
-    B3 = np.array([
-        [0, 0, 0],
+    B1_2 = np.array([
         [1, 1, 1],
-        [0, 0, 0]
+        [2, 0, 2],
+        [2, 2, 2]
     ], dtype=int)
 
-    B4 = np.array([
-        [0, 0, 0],
-        [1, 0, 1],
-        [0, 0, 0]
+    B1_3 = np.array([
+        [2, 2, 1],
+        [2, 0, 1],
+        [2, 2, 1]
     ], dtype=int)
 
-    B_sets = [B1, B2, B3, B4]
-    result_arr = m4_operation_binary(arr, B_sets, max_iterations=1000)
+    B1_4 = np.array([
+        [2, 2, 2],
+        [2, 0, 2],
+        [1, 1, 1]
+    ], dtype=int)
+
+    B1_list = [
+        B1_1,
+        B1_2,
+        B1_3,
+        B1_4
+    ]
+    result_arr = m4_operation_hmt(arr, B1_list, max_iterations=1000)
 
 else:
     print(f"Unknown command: {command}")
