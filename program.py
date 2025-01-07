@@ -96,13 +96,7 @@ if len(sys.argv) >= 3:
     param = sys.argv[2]
 
 # Load the image
-<<<<<<< HEAD
-#image_path = "./components/images/c_lenac_small.bmp"
-image_path = "./components/images/fourier/vertical-stripes.bmp"
-#image_path = "./components/images/g_lena_small.bmp"
-=======
 image_path = "./task3/images/girlbw.bmp"
->>>>>>> 9cbafedee58a2483a5a8892b6cded369cbcce646
 image = Image.open(image_path)
 if image.mode not in ("RGB", "L"):
     image = image.convert("RGB")

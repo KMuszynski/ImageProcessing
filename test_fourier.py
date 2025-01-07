@@ -3,6 +3,7 @@ from PIL import Image
 import sys
 import os
 import time
+import matplotlib.pyplot as plt
 
 # Load the image
 image_path = "./components/images/c_lenac_small.bmp"
@@ -186,7 +187,6 @@ if "--fast" in sys.argv:
 
     print("Fast mode: Fourier transforms for each channel saved.")
 
-# Slow method (no decimation, same as before)
 if "--slow" in sys.argv:
     start_time = time.time()
 
@@ -225,3 +225,4 @@ if "--slow" in sys.argv:
     save_fourier_transform(f_transform_b, 'blue')
 
     print("Slow mode: Fourier transforms for each channel saved.")
+
