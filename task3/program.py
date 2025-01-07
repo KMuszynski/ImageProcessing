@@ -40,7 +40,7 @@ if len(sys.argv) < 2:
 command = sys.argv[1]
 
 # Load the image
-image_path = "./task3/images/girl_small.bmp"
+image_path = "./task3/binary_image.bmp"
 image = Image.open(image_path).convert("L")
 arr = np.array(image)
 arr = to_binary(arr)
