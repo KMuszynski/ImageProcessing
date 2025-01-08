@@ -32,7 +32,7 @@ def dilation(A, B):
     padded_A, p, q = pad_image(A, B)
     dilated = np.zeros_like(A)
 
-    # For dilation: a pixel in the output is 1 if any of the pixels
+    # A pixel in the output is 1 if any of the pixels
     # under B=1 in the neighborhood is 1 in A.
     for i in range(p, padded_A.shape[0] - p):
         for j in range(q, padded_A.shape[1] - q):

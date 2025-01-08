@@ -40,7 +40,7 @@ if len(sys.argv) < 2:
 command = sys.argv[1]
 
 # Load the image
-image_path = "./task3/binary_image.bmp"
+image_path = "./task3/images/b_mandrill.bmp"
 image = Image.open(image_path).convert("L")
 arr = np.array(image)
 arr = to_binary(arr)
@@ -113,13 +113,19 @@ if command == '--help':
     sys.exit()
 
 elif command in ['--dilation', '--erosion', '--opening', '--closing', '--hmt']:
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 3 and command not in ['--dilation', '--erosion', '--opening', '--closing']:
         print("Please provide the parameter for the selected operation.")
         print_help()
         sys.exit()
-    param = sys.argv[2]
-    size = int(param)
-    B = np.ones((size, size), dtype=int)
+    if command == '--hmt':
+        param = sys.argv[2]
+        size = int(param)
+
+    B =  np.array([
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 1, 0]
+    ], dtype=int)   # np.ones((size, size), dtype=int)
 
     if command == '--dilation':
         result_arr = dilation(arr, B)
