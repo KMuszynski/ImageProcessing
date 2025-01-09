@@ -6,22 +6,40 @@ from .utilities import pad_image, get_subregion
 def erosion(A, B):
     """
     Perform erosion on binary image A with structuring element B.
-    Erosion: (A ⊖ B)
-    A and B are binary (0/1) arrays.
     """
-    padded_A, p, q = pad_image(A, B)
     eroded = np.zeros_like(A)
 
-    # For erosion: a pixel in A remains 1 if all B=1 positions are 1 in A
-    # i.e. B acts like a mask that must fit entirely into A's foreground.
-    for i in range(p, padded_A.shape[0] - p):
-        for j in range(q, padded_A.shape[1] - q):
-            region = get_subregion(padded_A, i, j, B)
-            # Check if all pixels under B=1 are also 1 in the region
-            if np.all(region[B == 1] == 1):
-                eroded[i - p, j - q] = 1
+    # Find coordinates of 1s in A
+    coords_A = np.argwhere(A == 1)
+
+    # Anchor point (center of B)
+    anchor_y, anchor_x = B.shape[0] // 2, B.shape[1] // 2
+
+    # Iterate through each 1 in A
+    for y, x in coords_A:
+        is_match = True
+
+        # Check all pixels in the structuring element B
+        for i in range(B.shape[0]):
+            for j in range(B.shape[1]):
+                if B[i, j] == 1:
+                    new_y = y + (i - anchor_y)
+                    new_x = x + (j - anchor_x)
+
+                    # Fail if out of bounds or if no match
+                    if not (0 <= new_y < A.shape[0] and 0 <= new_x < A.shape[1]) or A[new_y, new_x] != 1:
+                        is_match = False
+                        break
+            if not is_match:
+                break
+
+        # If all checks passed, set the output pixel to 1
+        if is_match:
+            eroded[y, x] = 1
 
     return eroded
+
+
 
 
 def dilation(A, B):
@@ -34,7 +52,7 @@ def dilation(A, B):
     # Find coordinates of 1s in A
     coords_A = np.argwhere(A == 1)
 
-    # Anchor point (0, 0) in B corresponds to its center
+    # Anchor point (center of B)
     anchor_y = B.shape[0] // 2
     anchor_x = B.shape[1] // 2
 

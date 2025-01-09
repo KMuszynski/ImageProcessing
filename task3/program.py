@@ -123,9 +123,9 @@ elif command in ['--dilation', '--erosion', '--opening', '--closing', '--hmt']:
         size = int(param)
 
     B =  np.array([
-        [0, 1, 0],
         [0, 0, 0],
-        [0, 1, 0]
+        [0, 1, 1],
+        [0, 0, 0]
     ], dtype=int)   # np.ones((size, size), dtype=int)
 
     if command == '--dilation':
