@@ -35,15 +35,16 @@ def dilation(A, B):
     coords_A = np.argwhere(A == 1)
 
     # Anchor point (0, 0) in B corresponds to its center
-    anchor_y, anchor_x = B.shape[0] // 2, B.shape[1] // 2
+    anchor_y = B.shape[0] // 2
+    anchor_x = B.shape[1] // 2
 
     # Iterate through each 1 in A
     for y, x in coords_A:
         for i in range(B.shape[0]):
             for j in range(B.shape[1]):
                 if B[i, j] == 1:
-                    new_y = y + (i - anchor_y)
-                    new_x = x + (j - anchor_x)
+                    new_y = y + (i - anchor_y)  # Mapping row of the SE to the row of the A
+                    new_x = x + (j - anchor_x)  # Mapping column of the Se to the column of A
                     if 0 <= new_y < A.shape[0] and 0 <= new_x < A.shape[1]:
                         dilated[new_y, new_x] = 1
     return dilated
