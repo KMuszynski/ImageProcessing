@@ -23,8 +23,8 @@ def erosion(A, B):
         for i in range(B.shape[0]):
             for j in range(B.shape[1]):
                 if B[i, j] == 1:
-                    new_y = y + (i - anchor_y)
-                    new_x = x + (j - anchor_x)
+                    new_y = y + (i - anchor_y)  # Mapping row of the SE to the row of the A
+                    new_x = x + (j - anchor_x)  # Mapping column of the SE to the column of A
 
                     # Fail if out of bounds or if no match
                     if not (0 <= new_y < A.shape[0] and 0 <= new_x < A.shape[1]) or A[new_y, new_x] != 1:
@@ -33,7 +33,7 @@ def erosion(A, B):
             if not is_match:
                 break
 
-        # If all checks passed, set the output pixel to 1
+        # Set the output pixel to 1 if checks passed
         if is_match:
             eroded[y, x] = 1
 
@@ -62,7 +62,7 @@ def dilation(A, B):
             for j in range(B.shape[1]):
                 if B[i, j] == 1:
                     new_y = y + (i - anchor_y)  # Mapping row of the SE to the row of the A
-                    new_x = x + (j - anchor_x)  # Mapping column of the Se to the column of A
+                    new_x = x + (j - anchor_x)  # Mapping column of the SE to the column of A
                     if 0 <= new_y < A.shape[0] and 0 <= new_x < A.shape[1]:
                         dilated[new_y, new_x] = 1
     return dilated
