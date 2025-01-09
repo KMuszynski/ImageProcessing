@@ -29,17 +29,23 @@ def dilation(A, B):
     Perform dilation on binary image A with structuring element B.
     Dilation: (A ⊕ B)
     """
-    padded_A, p, q = pad_image(A, B)
     dilated = np.zeros_like(A)
 
-    # A pixel in the output is 1 if any of the pixels
-    # under B=1 in the neighborhood is 1 in A.
-    for i in range(p, padded_A.shape[0] - p):
-        for j in range(q, padded_A.shape[1] - q):
-            region = get_subregion(padded_A, i, j, B)
-            if np.any(region[B == 1] == 1):
-                dilated[i - p, j - q] = 1
+    # Find coordinates of 1s in A
+    coords_A = np.argwhere(A == 1)
 
+    # Anchor point (0, 0) in B corresponds to its center
+    anchor_y, anchor_x = B.shape[0] // 2, B.shape[1] // 2
+
+    # Iterate through each 1 in A
+    for y, x in coords_A:
+        for i in range(B.shape[0]):
+            for j in range(B.shape[1]):
+                if B[i, j] == 1:
+                    new_y = y + (i - anchor_y)
+                    new_x = x + (j - anchor_x)
+                    if 0 <= new_y < A.shape[0] and 0 <= new_x < A.shape[1]:
+                        dilated[new_y, new_x] = 1
     return dilated
 
 

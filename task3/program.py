@@ -40,7 +40,8 @@ if len(sys.argv) < 2:
 command = sys.argv[1]
 
 # Load the image
-image_path = "./task3/images/b_mandrill.bmp"
+# image_path = "./task3/images/b_mandrill.bmp"
+image_path = "./task3/binary_image.bmp"
 image = Image.open(image_path).convert("L")
 arr = np.array(image)
 arr = to_binary(arr)
@@ -122,9 +123,9 @@ elif command in ['--dilation', '--erosion', '--opening', '--closing', '--hmt']:
         size = int(param)
 
     B =  np.array([
-        [0, 1, 0],
-        [1, 1, 1],
-        [0, 1, 0]
+        [0, 0, 0],
+        [0, 1, 1],
+        [0, 0, 0]
     ], dtype=int)   # np.ones((size, size), dtype=int)
 
     if command == '--dilation':
