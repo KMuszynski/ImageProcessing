@@ -28,7 +28,7 @@ def create_binary_bmp_from_array(array):
     """
     binary_array = (array * 255).astype(np.uint8)  # Convert binary to 0 and 255 for BMP
     img = Image.fromarray(binary_array, mode="L")
-    img.save("binary_image.bmp", format="BMP")
+    img.save("binary_image_from_array.bmp", format="BMP")
     print("Binary image saved as 'binary_image_from_array.bmp'.")
 
 
@@ -37,12 +37,23 @@ points = {(2, 1), (2, 2), (3, 2), (1, 3), (2, 3), (3, 3), (4, 3), (2, 4), (3, 4)
 # create_binary_bmp_from_points(points, size=(8, 6))
 
 # Example usage with NumPy array
+# array = np.array([
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 1, 0, 0, 0, 0, 0],
+#     [0, 0, 1, 1, 0, 0, 0, 0],
+#     [0, 1, 1, 1, 1, 0, 0, 0],
+#     [0, 0, 1, 1, 0, 0, 0, 0],
+#     [0, 0, 0, 0, 0, 0, 0, 0],
+# ], dtype=int)
+
 array = np.array([
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 1, 1, 0, 0, 0, 0],
-    [0, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 1, 0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 0, 1, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 0],
     [0, 0, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0]
 ], dtype=int)
 create_binary_bmp_from_array(array)
