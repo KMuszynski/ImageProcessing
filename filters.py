@@ -4,6 +4,7 @@ from PIL import Image
 from test_fourier import dft_2d, idft_2d, fftshift_custom
 
 
+
 def create_filter(filter_type, size, width, height, params={}):
     """
     Create a frequency-domain filter mask.
@@ -35,10 +36,11 @@ def create_filter(filter_type, size, width, height, params={}):
         mask[(distance <= lower) | (distance > upper)] = 1
     elif filter_type == "edge":
         direction = params.get("direction", "horizontal")
-        if direction == "horizontal":
-            mask[cx-size:cx+size+1, :] = 1
-        elif direction == "vertical":
-            mask[:, cy-size:cy+size+1] = 1
+        width = params.get("width", 10)
+        if direction == "vertical":
+            mask[cx - width: cx + width + 1, :] = 1
+        elif direction == "horizontal":
+            mask[:, cy - width: cy + width + 1] = 1
     elif filter_type == "phase":
         k, l = params.get("k", 0), params.get("l", 0)
         n = np.arange(height).reshape(-1, 1)
@@ -63,7 +65,12 @@ def apply_filter(image, filter_type, size, params={}):
 
     # Create the frequency domain filter mask
     mask = create_filter(filter_type, size, width, height, params)
-
+    # Load the mask image
+    #mask = create_mask_from_image(np.array(Image.open('./F5/Masks/F5Mask2.png').convert('L'), dtype=np.uint8))
+    
+    # If needed save the mask as image
+    #save_mask(mask)
+    
     # Apply the mask to each frequency domain of the channels
     filtered_transform_r = f_transform_r * mask
     filtered_transform_g = f_transform_g * mask
@@ -92,6 +99,24 @@ def apply_filter(image, filter_type, size, params={}):
 
     return filtered_image_rgb
 
+def save_mask(mask):
+    # Extract the magnitude (or alternatively, you could use np.real(mask))
+    mask_real = np.abs(mask)
+
+    # Normalize the mask to fit in the range [0, 255] for saving as an image
+    mask_normalized = (255 * (mask_real - np.min(mask_real)) / (np.max(mask_real) - np.min(mask_real))).astype(np.uint8)
+
+    # Convert the mask to a PIL image and save as BMP
+    mask_image = Image.fromarray(mask_normalized)
+    mask_image.save('created_mask.bmp')
+
+def create_mask_from_image(grayscale_image):
+    normalized_image = grayscale_image / 255.0
+    
+    # Create a complex-valued mask with magnitude from normalized image and phase = 0
+    mask = normalized_image.astype(np.complex128)
+    return mask
+
 def main():
     parser = argparse.ArgumentParser(description="Apply frequency domain filters to an image.")
     parser.add_argument("--lowpass", type=int, help="Apply low-pass filter with specified cutoff size.")
@@ -99,12 +124,13 @@ def main():
     parser.add_argument("--bandpass", type=str, help="Apply band-pass filter with lower,upper cutoff (e.g., 10,50).")
     parser.add_argument("--bandcut", type=str, help="Apply band-cut filter with lower,upper cutoff (e.g., 10,50).")
     parser.add_argument("--edge", type=str, help="Apply edge-detection high-pass filter. Specify direction (horizontal or vertical).")
+    parser.add_argument("--width", type=int, help="Specify width for the edge filter.")
     parser.add_argument("--phase", type=str, help="Apply phase-modifying filter. Specify k,l values (e.g., 1,2).")
     parser.add_argument("--output", type=str, help="Path to save the filtered image.", default="filtered_image.bmp")
     args = parser.parse_args()
 
     # Load the image in RGB mode
-    image_path = "./components/images/c_lenac_small.bmp"
+    image_path = "./F5/Images/F5test3.png"
     image = Image.open(image_path).convert("RGB")  # Convert to RGB if not already
     image_array = np.array(image)
 
@@ -121,7 +147,8 @@ def main():
         lower, upper = map(int, args.bandcut.split(","))
         filtered_image = apply_filter(image_array, "bandcut", 0, params={"lower": lower, "upper": upper})
     elif args.edge:
-        filtered_image = apply_filter(image_array, "edge", 10, params={"direction": args.edge})
+        width = args.width if args.width else 10 
+        filtered_image = apply_filter(image_array, "edge", 10, params={"direction": args.edge, "width": width})
     elif args.phase:
         k, l = map(int, args.phase.split(","))
         filtered_image = apply_filter(image_array, "phase", 0, params={"k": k, "l": l})

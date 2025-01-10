@@ -189,7 +189,7 @@ def idft_2d(f_transform):
 def fftshift_custom(f_transform):
     height, width = f_transform.shape
     cx, cy = height // 2, width // 2
-
+ 
     top_left = f_transform[:cx, :cy]
     top_right = f_transform[:cx, cy:]
     bottom_left = f_transform[cx:, :cy]
@@ -221,6 +221,30 @@ def save_fourier_transform(f_transform, channel_name):
     fourier_im = Image.fromarray(f_transform_normalized.astype(np.uint8))
     fourier_im.save(f'{channel_name}-fourier-transform.bmp')
 
+###############################################################################
+# 8*)  Add black pixels to achive original resolution
+###############################################################################
+def add_black_pixels(image, original_shape):
+    """
+    Add black pixels every second pixel in both dimensions
+    to match the original image size.
+
+    Parameters:
+        image (numpy.ndarray): Reconstructed image after decimation.
+        original_shape (tuple): The shape of the original image (height, width, channels).
+
+    Returns:
+        numpy.ndarray: Image with black pixels added to maintain original size.
+    """
+    original_height, original_width, channels = original_shape
+    # Create an array of zeros with the original dimensions
+    expanded_image = np.zeros((original_height, original_width, channels), dtype=image.dtype)
+    
+    # Place the reconstructed image pixels at the appropriate positions
+    expanded_image[::2, ::2] = image
+    
+    # Return the expanded image
+    return expanded_image
 
 ###############################################################################
 # 8) SLOW vs FAST
@@ -255,6 +279,10 @@ if "--fast" in sys.argv:
 
     # Clip
     reconstructed_image_rgb = np.clip(reconstructed_image_rgb, 0, 255).astype(np.uint8)
+
+    # If needed add black pixels in place of the decimated ones to keep the original dimensions
+    reconstructed_image_rgb = add_black_pixels(reconstructed_image_rgb, arr.shape)
+
 
     # Save
     reconstructed_im = Image.fromarray(reconstructed_image_rgb)
