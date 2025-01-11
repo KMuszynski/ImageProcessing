@@ -1,9 +1,13 @@
 import numpy as np
 import argparse
 from PIL import Image
-from test_fourier import dft_2d, idft_2d, fftshift_custom
+from test_fourier import dft_2d_decimated, idft_2d_decimated, fftshift_custom
 
+def dft_2d(image):
+    return dft_2d_decimated(image)
 
+def idft_2d(image):
+    return idft_2d_decimated(image)
 
 def create_filter(filter_type, size, width, height, params={}):
     """

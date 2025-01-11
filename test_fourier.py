@@ -18,16 +18,6 @@ height, width, _ = arr.shape # Ignore 3
 
 
 ###############################################################################
-# 1) SPATIAL DECIMATION
-###############################################################################
-def decimate_image(image, factor=2):
-    """
-    Downsample the image in the spatial domain by factor.
-    """
-    return image[::factor, ::factor]
-
-
-###############################################################################
 # 2) FAST FFT AND IFFT (1D, COOLEY–TUKEY)
 ###############################################################################
 def fft_1d(signal):
@@ -46,7 +36,7 @@ def fft_1d(signal):
     combined = np.zeros(N, dtype=complex)
     half = N // 2
     for k in range(half):
-        # Twiddle factor (?)
+        # Twiddle factor
         t = np.exp(-2j * np.pi * k / N) * odd[k]
         combined[k] = even[k] + t
         combined[k + half] = even[k] - t
@@ -56,7 +46,7 @@ def fft_1d(signal):
 def ifft_1d(signal):
     """
     1D Inverse FFT.
-    Used the property: IFFT(x) = 1/N * conj( FFT( conj(x) ) ).
+    Uses the property: IFFT(x) = 1/N * conj(FFT(conj(x))).
     """
     # Conjugate
     conj_signal = np.conjugate(signal)
@@ -89,38 +79,31 @@ def idft_1d_decimated(signal):
 ###############################################################################
 def dft_2d_decimated(image):
     """
-    2D DFT with decimation in the spatial domain, then fast 1D FFT on rows and columns.
+    2D DFT using decimation in the spatial domain.
+    Performs FFT on rows and then columns, without shrinking the image.
     """
-    # 1) Decimate the image
-    image_decimated = decimate_image(image)
-    h, w = image_decimated.shape  # new dimensions after decimation
+    # FFT on rows
+    row_transform = np.array([fft_1d(image[row]) for row in range(image.shape[0])], dtype=complex)
 
-    # 2) FFT on rows
-    row_transform = np.array([dft_1d_decimated(image_decimated[row]) for row in range(h)], dtype=complex)
+    # FFT on columns
+    col_transform = np.array([fft_1d(row_transform[:, col]) for col in range(image.shape[1])], dtype=complex)
 
-    # 3) FFT on columns
-    col_transform = np.zeros((w, h), dtype=complex)
-    for col in range(w):
-        col_transform[col] = dft_1d_decimated(row_transform[:, col])
-    # Transpose back
+    # Return the transposed result to match the dimensions
     return col_transform.T
 
 
 def idft_2d_decimated(f_transform):
     """
-    2D inverse DFT with decimation in the spatial domain, using fast 1D IFFT on rows and columns.
-    Reconstructs the decimated image (will be smaller).
+    2D inverse DFT using decimation in the spatial domain.
+    Performs IFFT on rows and then columns, reconstructing the original image.
     """
-    h, w = f_transform.shape
+    # IFFT on rows
+    row_transform = np.array([ifft_1d(f_transform[row]) for row in range(f_transform.shape[0])], dtype=complex)
 
-    # 1) IFFT on rows
-    row_transform = np.array([idft_1d_decimated(f_transform[row]) for row in range(h)], dtype=complex)
+    # IFFT on columns
+    col_transform = np.array([ifft_1d(row_transform[:, col]) for col in range(f_transform.shape[1])], dtype=complex)
 
-    # 2) IFFT on columns
-    col_transform = np.zeros((w, h), dtype=complex)
-    for col in range(w):
-        col_transform[col] = idft_1d_decimated(row_transform[:, col])
-    # Transpose back
+    # Return the transposed result to match the dimensions
     return col_transform.T
 
 
@@ -279,10 +262,6 @@ if "--fast" in sys.argv:
 
     # Clip
     reconstructed_image_rgb = np.clip(reconstructed_image_rgb, 0, 255).astype(np.uint8)
-
-    # If needed add black pixels in place of the decimated ones to keep the original dimensions
-    reconstructed_image_rgb = add_black_pixels(reconstructed_image_rgb, arr.shape)
-
 
     # Save
     reconstructed_im = Image.fromarray(reconstructed_image_rgb)
