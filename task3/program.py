@@ -2,7 +2,7 @@ import numpy as np
 from PIL import Image
 import sys
 
-from functions.morph import dilation, erosion, opening, closing, hit_or_miss, create_B2_from_B1, m4_operation_hmt
+from functions.morph import dilation, erosion, opening, closing, hit_or_miss, create_B2_from_B1, m4_operation_hmt, region_growing
 from functions.utilities import to_binary
 
 
@@ -38,8 +38,11 @@ if len(sys.argv) < 2:
 
 command = sys.argv[1]
 
-# image_path = "./task3/images/b_mandrill.bmp"
-image_path = "./task3/binary_image_from_array.bmp"
+image_path = "./task3/images/b_mandrill.bmp"
+# image_path = "./task3/images/b_boatbw.bmp"
+# image_path = "./task3/images/b_lenabw.bmp"
+# image_path = "./task3/binary_image_from_array.bmp"
+# image_path = "./task3/images/dilation.bmp"
 image = Image.open(image_path).convert('L')
 arr = np.array(image)
 arr = to_binary(arr)
@@ -53,8 +56,8 @@ if command == '--help':
     sys.exit()
 
 B =  np.array([
+    [1, 1, 1],
     [0, 0, 0],
-    [0, 1, 1],
     [0, 0, 0]
 ], dtype=int)
 
@@ -74,14 +77,13 @@ elif command == '--hmt':
     B1 = np.array([
         [0, 0, 0],
         [0, 1, 0],
-        [0, 0, 0]
+        [2, 0, 2]
     ], dtype=int)
 
     # Complement B2
     B2 = create_B2_from_B1(B1)
 
     result_arr = hit_or_miss(arr, B1, B2)
-
 
 elif command == '--m4':
     B1_1 = np.array([
@@ -114,7 +116,14 @@ elif command == '--m4':
         B1_3,
         B1_4
     ]
-    result_arr = m4_operation_hmt(arr, B1_list, max_iterations=1000)
+    result_arr = m4_operation_hmt(arr, B1_list, max_iterations=100)
+
+elif command == '--region':
+    param = 3 # default
+    seed = (3, 3)
+
+    threshold = int(param)  # Use the provided threshold for growing
+    result_arr = region_growing(arr, seed, threshold)
 
 else:
     print(f"Unknown command: {command}")
