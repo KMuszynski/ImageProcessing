@@ -38,11 +38,14 @@ if len(sys.argv) < 2:
 
 command = sys.argv[1]
 
-image_path = "./task3/images/b_mandrill.bmp"
+# image_path = "./task3/images/girl_small.bmp"
+# image_path = "./task3/images/b_mandrill.bmp"
 # image_path = "./task3/images/b_boatbw.bmp"
 # image_path = "./task3/images/b_lenabw.bmp"
 # image_path = "./task3/binary_image_from_array.bmp"
 # image_path = "./task3/images/dilation.bmp"
+# image_path = "./task3/binary_image.bmp"
+image_path = "./task3/images/pentagon.bmp"
 image = Image.open(image_path).convert('L')
 arr = np.array(image)
 arr = to_binary(arr)
@@ -75,9 +78,9 @@ elif command == '--closing':
 
 elif command == '--hmt':
     B1 = np.array([
-        [0, 0, 0],
-        [0, 1, 0],
-        [2, 0, 2]
+        [2, 2, 0],
+        [2, 1, 2],
+        [2, 2, 2]
     ], dtype=int)
 
     # Complement B2
@@ -86,6 +89,7 @@ elif command == '--hmt':
     result_arr = hit_or_miss(arr, B1, B2)
 
 elif command == '--m4':
+    # Set 1
     B1_1 = np.array([
         [1, 2, 2],
         [1, 0, 2],
@@ -110,17 +114,42 @@ elif command == '--m4':
         [1, 1, 1]
     ], dtype=int)
 
+    # Set 2
+    # B1_1 = np.array([
+    #     [0, 0, 0],
+    #     [2, 1, 2],
+    #     [1, 1, 1]
+    # ], dtype=int)
+    #
+    # B1_2 = np.array([
+    #     [2, 0, 0],
+    #     [1, 1, 0],
+    #     [1, 1, 2]
+    # ], dtype=int)
+    #
+    # B1_3 = np.array([
+    #     [1, 2, 0],
+    #     [1, 1, 0],
+    #     [1, 2, 0]
+    # ], dtype=int)
+    #
+    # B1_4 = np.array([
+    #     [1, 1, 2],
+    #     [1, 1, 0],
+    #     [2, 0, 0]
+    # ], dtype=int)
+
     B1_list = [
         B1_1,
         B1_2,
         B1_3,
         B1_4
     ]
-    result_arr = m4_operation_hmt(arr, B1_list, max_iterations=100)
+    result_arr = m4_operation_hmt(arr, B1_list, max_iterations=5000)
 
 elif command == '--region':
-    param = 3 # default
-    seed = (3, 3)
+    param = 6 # default
+    seed = (100, 100)
 
     threshold = int(param)  # Use the provided threshold for growing
     result_arr = region_growing(arr, seed, threshold)

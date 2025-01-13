@@ -89,7 +89,7 @@ def hit_or_miss(A, B1, B2):
 
 def m4_operation_hmt(A, B1_list, max_iterations=1000):
     """
-    For each 3-value structuring element B1_i in B1_list:
+    For each 2 or 3-value structuring element B1_i in B1_list:
       - Create B2_i from B1_i
       - Let X_{i,0} = A
       - Repeat:
