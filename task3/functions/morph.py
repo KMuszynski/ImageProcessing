@@ -145,12 +145,12 @@ def create_B2_from_B1(B1):
     return B2
 
 
-def region_growing(arr, seed, threshold=10, region_value=1, connectivity=8):
+def region_growing(arr, seed, threshold=10, region_value=1, connectivity=8, is_color=False):
     """
     Perform region growing segmentation on the image starting from a seed point.
 
     Parameters:
-    - arr: Input grayscale or binary image (as a numpy array).
+    - arr: Input grayscale, binary or RBG image (as a numpy array).
     - seed: Starting point for region growing (x, y).
     - threshold: Intensity difference threshold for adding neighboring pixels to the region (default is 10).
     - region_value: Value assigned to the segmented region (default is 1).
@@ -159,25 +159,38 @@ def region_growing(arr, seed, threshold=10, region_value=1, connectivity=8):
     Returns:
     - Segmented binary image with the region grown around the seed.
     """
-    rows, cols = arr.shape
-    segmented = np.zeros_like(arr)
+    if is_color:
+        rows, cols, channels = arr.shape
+        segmented = np.zeros((rows, cols), dtype=np.uint8)
+    else:
+        rows, cols = arr.shape
+        segmented = np.zeros_like(arr)
 
-    # Initialize a list for pixels to process (queue for BFS-like region growing)
+    # Initialize a list for pixels to process (queue)
     to_process = [seed]
     segmented[seed] = region_value
 
     while to_process:
         x, y = to_process.pop()
+        # print(f"Processing pixel: ({x}, {y}), current queue size: {len(to_process)}")
 
         # Check neighbors based on connectivity (4 or 8-connected)
         neighbors = get_neighbors(x, y, rows, cols, connectivity)
 
         for nx, ny in neighbors:
-            if segmented[nx, ny] == 0:  # If not already in the region
-                # Check if the intensity difference is below the threshold
-                if abs(int(arr[x, y]) - int(arr[nx, ny])) <= threshold:
+            if segmented[nx, ny] == 0:
+                if is_color:
+                    # color difference (euclidean distance in RGB)
+                    diff = np.linalg.norm(arr[x, y] - arr[nx, ny])
+                else:
+                    diff = abs(int(arr[x, y]) - int(arr[nx, ny]))
+
+                # print(f"   Checking neighbor ({nx}, {ny}), diff={diff}")
+
+                if diff <= threshold:
                     segmented[nx, ny] = region_value
                     to_process.append((nx, ny))
+                    # print(f"   -> Added neighbor ({nx}, {ny}) to region.")
 
     return segmented.astype(np.uint8)
 

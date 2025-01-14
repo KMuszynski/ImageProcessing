@@ -38,6 +38,10 @@ if len(sys.argv) < 2:
 
 command = sys.argv[1]
 
+if command == '--help':
+    print_help()
+    sys.exit()
+
 # image_path = "./task3/images/girl_small.bmp"
 # image_path = "./task3/images/b_mandrill.bmp"
 # image_path = "./task3/images/b_boatbw.bmp"
@@ -45,24 +49,32 @@ command = sys.argv[1]
 # image_path = "./task3/binary_image_from_array.bmp"
 # image_path = "./task3/images/dilation.bmp"
 # image_path = "./task3/binary_image.bmp"
-image_path = "./task3/images/pentagon.bmp"
-image = Image.open(image_path).convert('L')
+# image_path = "./task3/images/pentagon.bmp"
+image_path = "./task3/images/c_lenac_small.bmp"
+# image = Image.open(image_path).convert('L')
+image = Image.open(image_path)
 arr = np.array(image)
-arr = to_binary(arr)
 
-binary_im = Image.fromarray((arr * 255).astype(np.uint8))
-binary_im.save("task3/results/binary.bmp")
-print("Binary image saved as 'binary.bmp'.")
+if len(arr.shape) == 3 and arr.shape[2] == 3:
+    print("Detected an RGB image.")
+    is_color = True
+else:
+    print("Detected a grayscale (or single-channel) image.")
+    is_color = False
 
-if command == '--help':
-    print_help()
-    sys.exit()
+if command != "--region":
+    arr = to_binary(arr)
 
-B =  np.array([
-    [1, 1, 1],
-    [0, 0, 0],
-    [0, 0, 0]
-], dtype=int)
+    binary_im = Image.fromarray((arr * 255).astype(np.uint8))
+    binary_im.save("task3/results/binary.bmp")
+    print("Binary image saved as 'binary.bmp'.")
+
+    B =  np.array([
+        [1, 1, 1],
+        [0, 0, 0],
+        [0, 0, 0]
+    ], dtype=int)
+
 
 if command == '--dilation':
     result_arr = dilation(arr, B)
@@ -148,11 +160,13 @@ elif command == '--m4':
     result_arr = m4_operation_hmt(arr, B1_list, max_iterations=5000)
 
 elif command == '--region':
-    param = 6 # default
-    seed = (100, 100)
+    threshold = 350
+    seed = (30, 30)
 
-    threshold = int(param)  # Use the provided threshold for growing
-    result_arr = region_growing(arr, seed, threshold)
+    print("Image shape:", arr.shape)
+    print("Seed is:", seed)
+
+    result_arr = region_growing(arr, seed, threshold, is_color=is_color)
 
 else:
     print(f"Unknown command: {command}")
