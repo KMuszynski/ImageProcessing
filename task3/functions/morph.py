@@ -86,6 +86,16 @@ def hit_or_miss(A, B1, B2):
     # Intersection
     return A_eroded & A_comp_eroded
 
+def m1(A, B):
+
+    dilated = dilation(A, B)
+    m1 = np.logical_and(dilated, np.logical_not(A)).astype(np.uint8)
+
+
+    return m1
+
+
+
 
 def m4_operation_hmt(A, B1_list, max_iterations=1000):
     """
@@ -113,11 +123,13 @@ def m4_operation_hmt(A, B1_list, max_iterations=1000):
 
             # Union with A
             X_new = np.logical_or(hmt_res, A).astype(np.uint8)
+            # H = np.logical_or(H, X_old).astype(np.uint8)
 
             print(f"[M4-HMT] SE {idx}, Iteration {iteration_count}, Foreground:", np.sum(X_new))
 
             # Check convergence
             if np.array_equal(X_new, X_old):
+                # debug: printing the exact pixels which differ
                 break
 
             X_old = X_new
@@ -172,7 +184,7 @@ def region_growing(arr, seed, threshold=10, region_value=1, connectivity=8, is_c
 
     while to_process:
         x, y = to_process.pop()
-        # print(f"Processing pixel: ({x}, {y}), current queue size: {len(to_process)}")
+        print(f"Processing pixel: ({x}, {y}), current queue size: {len(to_process)}")
 
         # Check neighbors based on connectivity (4 or 8-connected)
         neighbors = get_neighbors(x, y, rows, cols, connectivity)
@@ -185,12 +197,12 @@ def region_growing(arr, seed, threshold=10, region_value=1, connectivity=8, is_c
                 else:
                     diff = abs(int(arr[x, y]) - int(arr[nx, ny]))
 
-                # print(f"   Checking neighbor ({nx}, {ny}), diff={diff}")
+                print(f"   Checking neighbor ({nx}, {ny}), diff={diff}")
 
                 if diff <= threshold:
                     segmented[nx, ny] = region_value
                     to_process.append((nx, ny))
-                    # print(f"   -> Added neighbor ({nx}, {ny}) to region.")
+                    print(f"   -> Added neighbor ({nx}, {ny}) to region.")
 
     return segmented.astype(np.uint8)
 
@@ -236,7 +248,6 @@ def merge_regions(segmented_img, threshold=10):
     """
     rows, cols = segmented_img.shape
     merged_img = segmented_img.copy()
-    region_labels = np.unique(segmented_img)
 
     # Compare each pair of regions and merge if the difference is below threshold
     for i in range(rows):
